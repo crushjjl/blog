@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Jiang JiaLin</title>
+  <subtitle>Jiang Jialin&#39;s blog -- 蒋佳林</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://jjlhi.com/"/>
+  <updated>2017-08-31T16:31:26.781Z</updated>
+  <id>http://jjlhi.com/</id>
+  
+  <author>
+    <name>Jiang JiaLin</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>深夜，恭喜国足</title>
+    <link href="http://jjlhi.com/2017/08/30/second/"/>
+    <id>http://jjlhi.com/2017/08/30/second/</id>
+    <published>2017-08-30T15:28:47.000Z</published>
+    <updated>2017-08-31T16:31:26.781Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="恭喜中国足球在俄罗斯世界预选赛赢得一场胜利"><a href="#恭喜中国足球在俄罗斯世界预选赛赢得一场胜利" class="headerlink" title="恭喜中国足球在俄罗斯世界预选赛赢得一场胜利"></a>恭喜中国足球在俄罗斯世界预选赛赢得一场胜利</h1><h2 id="希望国足可以走得更远"><a href="#希望国足可以走得更远" class="headerlink" title="希望国足可以走得更远"></a>希望国足可以走得更远</h2><p>– 国足 牛逼！<br><a id="more"></a><br>– 又是一个伤心的夜晚<br>– 今天看到了希望<br>– 换来的是绝望<br>– 不是队员不努力<br>– 不是某个队员的失误<br>– 而是从古至今国足经历了多少次黑色三分钟<br>– 我们的球员什么时候才能分析场上形势<br>– 根据形势踢该踢的球<br>– 该往角球带就往角球带<br>– 不行卧草也能拖延时间<br>– 这是整个中国足球教育体系的问题<br>– 一次又一次的伤球迷的心<br>– 虽然下场比赛还是会继续为你们加油<br>– 但国足争气点<br>– 把属于足球的快乐还给中国球迷<br>– 我知道你们也很难受<br>– 但难受有用吗 我们更看重结果<br>– 但就这样的球队进了世界杯又能怎样呢<br>– 晚安吧 明天又是新的一天</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;恭喜中国足球在俄罗斯世界预选赛赢得一场胜利&quot;&gt;&lt;a href=&quot;#恭喜中国足球在俄罗斯世界预选赛赢得一场胜利&quot; class=&quot;headerlink&quot; title=&quot;恭喜中国足球在俄罗斯世界预选赛赢得一场胜利&quot;&gt;&lt;/a&gt;恭喜中国足球在俄罗斯世界预选赛赢得一场胜利&lt;/h1&gt;&lt;h2 id=&quot;希望国足可以走得更远&quot;&gt;&lt;a href=&quot;#希望国足可以走得更远&quot; class=&quot;headerlink&quot; title=&quot;希望国足可以走得更远&quot;&gt;&lt;/a&gt;希望国足可以走得更远&lt;/h2&gt;&lt;p&gt;– 国足 牛逼！&lt;br&gt;
+    
+    </summary>
+    
+      <category term="杂谈" scheme="http://jjlhi.com/categories/%E6%9D%82%E8%B0%88/"/>
+    
+    
+      <category term="sports" scheme="http://jjlhi.com/tags/sports/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>first blog</title>
+    <link href="http://jjlhi.com/2017/08/30/first-blog/"/>
+    <id>http://jjlhi.com/2017/08/30/first-blog/</id>
+    <published>2017-08-30T14:57:50.000Z</published>
+    <updated>2017-08-31T15:19:43.806Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="my-name-is-Jiang-JiaLin"><a href="#my-name-is-Jiang-JiaLin" class="headerlink" title="my name is Jiang JiaLin"></a>my name is Jiang JiaLin</h1><h2 id="This-is-my-first-hexo-blog-website-article"><a href="#This-is-my-first-hexo-blog-website-article" class="headerlink" title="This is my first hexo blog website article"></a>This is my first hexo blog website article</h2>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;my-name-is-Jiang-JiaLin&quot;&gt;&lt;a href=&quot;#my-name-is-Jiang-JiaLin&quot; class=&quot;headerlink&quot; title=&quot;my name is Jiang JiaLin&quot;&gt;&lt;/a&gt;my name is Jiang 
+    
+    </summary>
+    
+    
+      <category term="HTML" scheme="http://jjlhi.com/tags/HTML/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="http://jjlhi.com/2017/08/30/hello-world/"/>
+    <id>http://jjlhi.com/2017/08/30/hello-world/</id>
+    <published>2017-08-30T14:34:24.969Z</published>
+    <updated>2017-08-30T14:34:24.973Z</updated>
+    
+    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.
+    
+    </summary>
+    
+    
+  </entry>
+  
+</feed>
