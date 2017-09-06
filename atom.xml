@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Hello·Jiangjl</title>
-  <subtitle>Jiang Jialin&#39;s blog -- 蒋佳林</subtitle>
+  <subtitle>Believe you can and you&#39;re halfway there.</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jjlhi.com/"/>
@@ -9,7 +9,7 @@
   <id>http://jjlhi.com/</id>
   
   <author>
-    <name>Jiang JiaLin</name>
+    <name>Jiangjl</name>
     
   </author>
   
