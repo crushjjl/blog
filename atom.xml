@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jjlhi.com/"/>
-  <updated>2017-09-06T14:55:37.016Z</updated>
+  <updated>2017-09-06T14:59:53.757Z</updated>
   <id>http://jjlhi.com/</id>
   
   <author>
@@ -16,16 +16,19 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>testFile</title>
+    <title>Attention</title>
     <link href="http://jjlhi.com/2017/09/06/testFile/"/>
     <id>http://jjlhi.com/2017/09/06/testFile/</id>
     <published>2017-09-06T14:20:37.000Z</published>
-    <updated>2017-09-06T14:55:37.016Z</updated>
+    <updated>2017-09-06T14:59:53.757Z</updated>
     
     <content type="html"><![CDATA[<p>##本站作者还在探索建设中…</p>
 <ul>
+<li>有好东西给你们</li>
 <li>常来逛逛</li>
 <li>逛到深处会有福利的</li>
+<li>——————–横线—————————<a id="more"></a>
+</li>
 </ul>
 <p><strong><a href="http://jjlhi.com">福利</a></strong></p>
 <p><img src="https://farm3.staticflickr.com/2888/33038677584_8f3755dd1c_k.jpg" alt=""></p>
@@ -38,18 +41,17 @@
     
       &lt;p&gt;##本站作者还在探索建设中…&lt;/p&gt;
 &lt;ul&gt;
+&lt;li&gt;有好东西给你们&lt;/li&gt;
 &lt;li&gt;常来逛逛&lt;/li&gt;
 &lt;li&gt;逛到深处会有福利的&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;&lt;a href=&quot;http://jjlhi.com&quot;&gt;福利&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;htt
+&lt;li&gt;——————–横线—————————
     
     </summary>
     
-      <category term="测试" scheme="http://jjlhi.com/categories/%E6%B5%8B%E8%AF%95/"/>
+      <category term="解释说明" scheme="http://jjlhi.com/categories/%E8%A7%A3%E9%87%8A%E8%AF%B4%E6%98%8E/"/>
     
     
-      <category term="test" scheme="http://jjlhi.com/tags/test/"/>
+      <category term="Description" scheme="http://jjlhi.com/tags/Description/"/>
     
   </entry>
   
