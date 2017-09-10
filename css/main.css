@@ -2056,7 +2056,7 @@ img:hover {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #1203a7;
+  background: #66ffec;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2971,10 +2971,10 @@ img:hover {
   padding-right: 260px;
 }
 header {
-  width: 90%;
+  width: 100%;
 }
 .container .main-inner {
-  width: 90%;
+  width: 100%;
 }
 .content-wrap {
   width: calc(100% - 260px);
