@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jjlhi.com/"/>
-  <updated>2017-09-06T15:12:30.578Z</updated>
+  <updated>2017-09-20T14:15:17.890Z</updated>
   <id>http://jjlhi.com/</id>
   
   <author>
@@ -14,6 +14,74 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>递归</title>
+    <link href="http://jjlhi.com/2017/09/20/factorial/"/>
+    <id>http://jjlhi.com/2017/09/20/factorial/</id>
+    <published>2017-09-20T14:09:47.000Z</published>
+    <updated>2017-09-20T14:15:17.890Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h1><h2 id="浅谈js里面的递归！"><a href="#浅谈js里面的递归！" class="headerlink" title="浅谈js里面的递归！"></a>浅谈js里面的递归！</h2><ul>
+<li>递归函数是在一个函数通过名字调用自身的情况下构成的，示例如下。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function factorial(num)&#123;</div><div class="line">    if(num &lt;= 1)&#123;</div><div class="line">        return 1;</div><div class="line">    &#125;else&#123;</div><div class="line">        return num * factorial(num-1);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">factorial(5);  //120</div></pre></td></tr></table></figure>
+<ul>
+<li><p>上面的示例是一个经典递归阶乘函数。虽然这个函数表面看起来没什么问题，但是接下来你再看看，看仔细哟。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var anotherFactorial = factorial;</div><div class="line">    factorial = null;</div><div class="line">    console.log(anotherFactorial(4));//报错！！！</div></pre></td></tr></table></figure>
+</li>
+<li><p>出错了？是的。</p>
+</li>
+<li>上述代码先把factorial()函数保存在变量anotherfactorial中，然后将factorial变量设置为null，结果指向原始函数的引用只剩下一个。但在接下来调用anotherfactorial()时，由于必须执行factorial(),而factorial已经不再是函数，所以就会导致错误。在这种情况下，怎么解决这个问题呢？使用arguments.callee可以解决这个问题。</li>
+<li><a id="more"></a>
+</li>
+<li><p>我们知道，arguments.callee是一个指向正在执行的函数的指针，因此可以用它来实现对函数的递归调用，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">function factorial(num)&#123;</div><div class="line">    if(num &lt;= 1)&#123;</div><div class="line">        return 1;</div><div class="line">    &#125;else&#123;</div><div class="line">        return num * arguments.callee(num-1);//手动加粗</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>上面手动加粗的代码显示：通过使用arguments.callee代替函数名，可以确保无论怎样调用函数都不会出问题。因此，在编写递归函数时，使用arguments.callee总比使用函数名更保险。</p>
+</li>
+<li><p>但在严格模式下，不能通过脚本访问arguments.callee，访问这个属性会导致错误。不过，可以使用命名函数表达式来达成相同的效果。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">var factorial = (function f(num)&#123;</div><div class="line">    if(num &lt;= 1)&#123;</div><div class="line">        return 1;</div><div class="line">    &#125;else&#123;</div><div class="line">        return num*f(num-1);</div><div class="line">    &#125;</div><div class="line">    &#125;);</div></pre></td></tr></table></figure>
+</li>
+<li><p>通过以上的代码创建了名为f()的命名函数表达式，然后将它赋值给变量factorial。即便把函数复制给了另一个变量，函数的名字f仍然有效，所以递归调用照样能正确的完成。</p>
+</li>
+<li>这种方式在严格模式和非严格模式下都行得通。</li>
+<li>总结：</li>
+<li>递归： 函数体中调用函数自身–函数自己和自己玩。</li>
+</ul>
+<blockquote>
+<p>“Don’t let yesterday take up too much of today.”</p>
+</blockquote>
+<p><strong><a href="http://jjlhi.com">福利</a></strong></p>
+<p><img src="https://farm6.staticflickr.com/5469/16783837234_d8eee7d83c_h.jpg" alt=""></p>
+<blockquote>
+<p>看看别个怎么说的：<br>一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p>
+</blockquote>
+<h3 id="不说了，该睡觉了。"><a href="#不说了，该睡觉了。" class="headerlink" title="不说了，该睡觉了。"></a>不说了，该睡觉了。</h3>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;递归&quot;&gt;&lt;a href=&quot;#递归&quot; class=&quot;headerlink&quot; title=&quot;递归&quot;&gt;&lt;/a&gt;递归&lt;/h1&gt;&lt;h2 id=&quot;浅谈js里面的递归！&quot;&gt;&lt;a href=&quot;#浅谈js里面的递归！&quot; class=&quot;headerlink&quot; title=&quot;浅谈js里面的递归！&quot;&gt;&lt;/a&gt;浅谈js里面的递归！&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;递归函数是在一个函数通过名字调用自身的情况下构成的，示例如下。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;function factorial(num)&amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    if(num &amp;lt;= 1)&amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        return 1;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;#125;else&amp;#123;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;        return num * factorial(num-1);&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    &amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&amp;#125;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;factorial(5);  //120&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;上面的示例是一个经典递归阶乘函数。虽然这个函数表面看起来没什么问题，但是接下来你再看看，看仔细哟。&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;var anotherFactorial = factorial;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    factorial = null;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;    console.log(anotherFactorial(4));//报错！！！&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;出错了？是的。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;上述代码先把factorial()函数保存在变量anotherfactorial中，然后将factorial变量设置为null，结果指向原始函数的引用只剩下一个。但在接下来调用anotherfactorial()时，由于必须执行factorial(),而factorial已经不再是函数，所以就会导致错误。在这种情况下，怎么解决这个问题呢？使用arguments.callee可以解决这个问题。&lt;/li&gt;
+&lt;li&gt;
+    
+    </summary>
+    
+      <category term="JavaScript" scheme="http://jjlhi.com/categories/JavaScript/"/>
+    
+    
+      <category term="JavaScript" scheme="http://jjlhi.com/tags/JavaScript/"/>
+    
+  </entry>
   
   <entry>
     <title>Attention</title>
