@@ -1,49 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
-  <entry>
-    <title><![CDATA[递归]]></title>
-    <url>%2F2017%2F09%2F20%2Ffactorial%2F</url>
-    <content type="text"><![CDATA[递归浅谈js里面的递归！ 递归函数是在一个函数通过名字调用自身的情况下构成的，示例如下。 12345678function factorial(num)&#123; if(num &lt;= 1)&#123; return 1; &#125;else&#123; return num * factorial(num-1); &#125;&#125;factorial(5); //120 上面的示例是一个经典递归阶乘函数。虽然这个函数表面看起来没什么问题，但是接下来你再看看，看仔细哟。 123var anotherFactorial = factorial; factorial = null; console.log(anotherFactorial(4));//报错！！！ 出错了？是的。 上述代码先把factorial()函数保存在变量anotherfactorial中，然后将factorial变量设置为null，结果指向原始函数的引用只剩下一个。但在接下来调用anotherfactorial()时，由于必须执行factorial(),而factorial已经不再是函数，所以就会导致错误。在这种情况下，怎么解决这个问题呢？使用arguments.callee可以解决这个问题。 我们知道，arguments.callee是一个指向正在执行的函数的指针，因此可以用它来实现对函数的递归调用，例如： 1234567function factorial(num)&#123; if(num &lt;= 1)&#123; return 1; &#125;else&#123; return num * arguments.callee(num-1);//手动加粗 &#125;&#125; 上面手动加粗的代码显示：通过使用arguments.callee代替函数名，可以确保无论怎样调用函数都不会出问题。因此，在编写递归函数时，使用arguments.callee总比使用函数名更保险。 但在严格模式下，不能通过脚本访问arguments.callee，访问这个属性会导致错误。不过，可以使用命名函数表达式来达成相同的效果。例如： 1234567var factorial = (function f(num)&#123; if(num &lt;= 1)&#123; return 1; &#125;else&#123; return num*f(num-1); &#125; &#125;); 通过以上的代码创建了名为f()的命名函数表达式，然后将它赋值给变量factorial。即便把函数复制给了另一个变量，函数的名字f仍然有效，所以递归调用照样能正确的完成。 这种方式在严格模式和非严格模式下都行得通。 总结： 递归： 函数体中调用函数自身–函数自己和自己玩。 “Don’t let yesterday take up too much of today.” 福利 看看别个怎么说的：一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。 不说了，该睡觉了。]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[Attention]]></title>
-    <url>%2F2017%2F09%2F06%2FtestFile%2F</url>
-    <content type="text"><![CDATA[本站作者还在探索建设中… 有好东西给你们 常来逛逛 逛到深处会有福利的 ——————–横线————————— 福利 看看别个怎么说的：一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。 不说了，该睡觉了。]]></content>
-      <categories>
-        <category>解释说明</category>
-      </categories>
-      <tags>
-        <tag>Description</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[深夜，恭喜国足]]></title>
-    <url>%2F2017%2F08%2F30%2Fsecond%2F</url>
-    <content type="text"><![CDATA[恭喜中国足球在俄罗斯世界预选赛赢得一场胜利希望国足可以走得更远– 国足 牛逼！– 又是一个伤心的夜晚– 今天看到了希望– 换来的是绝望– 不是队员不努力– 不是某个队员的失误– 而是从古至今国足经历了多少次黑色三分钟– 我们的球员什么时候才能分析场上形势– 根据形势踢该踢的球– 该往角球带就往角球带– 不行卧草也能拖延时间– 这是整个中国足球教育体系的问题– 一次又一次的伤球迷的心– 虽然下场比赛还是会继续为你们加油– 但国足争气点– 把属于足球的快乐还给中国球迷– 我知道你们也很难受– 但难受有用吗 我们更看重结果– 但就这样的球队进了世界杯又能怎样呢– 晚安吧 明天又是新的一天]]></content>
-      <categories>
-        <category>杂谈</category>
-      </categories>
-      <tags>
-        <tag>sports</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[first blog]]></title>
-    <url>%2F2017%2F08%2F30%2Ffirst-blog%2F</url>
-    <content type="text"><![CDATA[my name is Jiang JiaLinThis is my first hexo blog website article]]></content>
-      <tags>
-        <tag>HTML</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[Hello World]]></title>
-    <url>%2F2017%2F08%2F30%2Fhello-world%2F</url>
-    <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
-  </entry>
+<search> 
+  
+    
+    <entry>
+      <title><![CDATA[递归]]></title>
+      <url>/2017/09/20/factorial/</url>
+      <content type="html"><![CDATA[<h1 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h1><h2 id="浅谈js里面的递归！"><a href="#浅谈js里面的递归！" class="headerlink" title="浅谈js里面的递归！"></a>浅谈js里面的递归！</h2><ul>
+<li>递归函数是在一个函数通过名字调用自身的情况下构成的，示例如下。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function factorial(num)&#123;</div><div class="line">    if(num &lt;= 1)&#123;</div><div class="line">        return 1;</div><div class="line">    &#125;else&#123;</div><div class="line">        return num * factorial(num-1);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">factorial(5);  //120</div></pre></td></tr></table></figure>
+<ul>
+<li><p>上面的示例是一个经典递归阶乘函数。虽然这个函数表面看起来没什么问题，但是接下来你再看看，看仔细哟。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var anotherFactorial = factorial;</div><div class="line">    factorial = null;</div><div class="line">    console.log(anotherFactorial(4));//报错！！！</div></pre></td></tr></table></figure>
+</li>
+<li><p>出错了？是的。</p>
+</li>
+<li>上述代码先把factorial()函数保存在变量anotherfactorial中，然后将factorial变量设置为null，结果指向原始函数的引用只剩下一个。但在接下来调用anotherfactorial()时，由于必须执行factorial(),而factorial已经不再是函数，所以就会导致错误。在这种情况下，怎么解决这个问题呢？使用arguments.callee可以解决这个问题。</li>
+<li><a id="more"></a>
+</li>
+<li><p>我们知道，arguments.callee是一个指向正在执行的函数的指针，因此可以用它来实现对函数的递归调用，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">function factorial(num)&#123;</div><div class="line">    if(num &lt;= 1)&#123;</div><div class="line">        return 1;</div><div class="line">    &#125;else&#123;</div><div class="line">        return num * arguments.callee(num-1);//手动加粗</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>上面手动加粗的代码显示：通过使用arguments.callee代替函数名，可以确保无论怎样调用函数都不会出问题。因此，在编写递归函数时，使用arguments.callee总比使用函数名更保险。</p>
+</li>
+<li><p>但在严格模式下，不能通过脚本访问arguments.callee，访问这个属性会导致错误。不过，可以使用命名函数表达式来达成相同的效果。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">var factorial = (function f(num)&#123;</div><div class="line">    if(num &lt;= 1)&#123;</div><div class="line">        return 1;</div><div class="line">    &#125;else&#123;</div><div class="line">        return num*f(num-1);</div><div class="line">    &#125;</div><div class="line">    &#125;);</div></pre></td></tr></table></figure>
+</li>
+<li><p>通过以上的代码创建了名为f()的命名函数表达式，然后将它赋值给变量factorial。即便把函数复制给了另一个变量，函数的名字f仍然有效，所以递归调用照样能正确的完成。</p>
+</li>
+<li>这种方式在严格模式和非严格模式下都行得通。</li>
+<li>总结：</li>
+<li>递归： 函数体中调用函数自身–函数自己和自己玩。</li>
+</ul>
+<blockquote>
+<p>“Don’t let yesterday take up too much of today.”</p>
+</blockquote>
+<p><strong><a href="http://jjlhi.com">福利</a></strong></p>
+<p><img src="https://farm6.staticflickr.com/5469/16783837234_d8eee7d83c_h.jpg" alt=""></p>
+<blockquote>
+<p>看看别个怎么说的：<br>一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p>
+</blockquote>
+<h3 id="不说了，该睡觉了。"><a href="#不说了，该睡觉了。" class="headerlink" title="不说了，该睡觉了。"></a>不说了，该睡觉了。</h3>]]></content>
+      
+        <categories>
+            
+            <category> JavaScript </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> JavaScript </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Attention]]></title>
+      <url>/2017/09/06/testFile/</url>
+      <content type="html"><![CDATA[<h2 id="本站作者还在探索建设中…"><a href="#本站作者还在探索建设中…" class="headerlink" title="本站作者还在探索建设中…"></a>本站作者还在探索建设中…</h2><ul>
+<li>有好东西给你们</li>
+<li>常来逛逛</li>
+<li>逛到深处会有福利的</li>
+<li>——————–横线—————————<a id="more"></a>
+</li>
+</ul>
+<p><strong><a href="http://jjlhi.com">福利</a></strong></p>
+<p><img src="https://farm3.staticflickr.com/2888/33038677584_8f3755dd1c_k.jpg" alt=""></p>
+<blockquote>
+<p>看看别个怎么说的：<br>一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p>
+</blockquote>
+<h3 id="不说了，该睡觉了。"><a href="#不说了，该睡觉了。" class="headerlink" title="不说了，该睡觉了。"></a>不说了，该睡觉了。</h3>]]></content>
+      
+        <categories>
+            
+            <category> 解释说明 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Description </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[深夜，恭喜国足]]></title>
+      <url>/2017/08/30/second/</url>
+      <content type="html"><![CDATA[<h1 id="恭喜中国足球在俄罗斯世界预选赛赢得一场胜利"><a href="#恭喜中国足球在俄罗斯世界预选赛赢得一场胜利" class="headerlink" title="恭喜中国足球在俄罗斯世界预选赛赢得一场胜利"></a>恭喜中国足球在俄罗斯世界预选赛赢得一场胜利</h1><h2 id="希望国足可以走得更远"><a href="#希望国足可以走得更远" class="headerlink" title="希望国足可以走得更远"></a>希望国足可以走得更远</h2><p>– 国足 牛逼！<br><a id="more"></a><br>– 又是一个伤心的夜晚<br>– 今天看到了希望<br>– 换来的是绝望<br>– 不是队员不努力<br>– 不是某个队员的失误<br>– 而是从古至今国足经历了多少次黑色三分钟<br>– 我们的球员什么时候才能分析场上形势<br>– 根据形势踢该踢的球<br>– 该往角球带就往角球带<br>– 不行卧草也能拖延时间<br>– 这是整个中国足球教育体系的问题<br>– 一次又一次的伤球迷的心<br>– 虽然下场比赛还是会继续为你们加油<br>– 但国足争气点<br>– 把属于足球的快乐还给中国球迷<br>– 我知道你们也很难受<br>– 但难受有用吗 我们更看重结果<br>– 但就这样的球队进了世界杯又能怎样呢<br>– 晚安吧 明天又是新的一天</p>
+]]></content>
+      
+        <categories>
+            
+            <category> 杂谈 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> sports </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[first blog]]></title>
+      <url>/2017/08/30/first-blog/</url>
+      <content type="html"><![CDATA[<h1 id="my-name-is-Jiang-JiaLin"><a href="#my-name-is-Jiang-JiaLin" class="headerlink" title="my name is Jiang JiaLin"></a>my name is Jiang JiaLin</h1><h2 id="This-is-my-first-hexo-blog-website-article"><a href="#This-is-my-first-hexo-blog-website-article" class="headerlink" title="This is my first hexo blog website article"></a>This is my first hexo blog website article</h2>]]></content>
+      
+        
+        <tags>
+            
+            <tag> HTML </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Hello World]]></title>
+      <url>/2017/08/30/hello-world/</url>
+      <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+]]></content>
+      
+        
+    </entry>
+    
+  
+  
 </search>
