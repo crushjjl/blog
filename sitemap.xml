@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://jjlhi.com/2017/09/20/factorial/</loc>
+    <loc>http://jjlhi.com/about/index.html</loc>
     
-    <lastmod>2017-09-20T14:20:24.213Z</lastmod>
+    <lastmod>2017-09-21T15:28:11.693Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://jjlhi.com/about/index.html</loc>
+    <loc>http://jjlhi.com/categories/index.html</loc>
     
-    <lastmod>2017-09-10T15:19:18.045Z</lastmod>
+    <lastmod>2017-09-21T15:27:53.109Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jjlhi.com/2017/09/20/factorial/</loc>
+    
+    <lastmod>2017-09-20T14:20:24.213Z</lastmod>
     
   </url>
   
@@ -26,13 +33,6 @@
     <loc>http://jjlhi.com/2017/08/30/second/</loc>
     
     <lastmod>2017-08-31T16:31:26.781Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://jjlhi.com/categories/index.html</loc>
-    
-    <lastmod>2017-08-31T15:22:59.891Z</lastmod>
     
   </url>
   
