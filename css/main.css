@@ -445,7 +445,7 @@ body {
 .header-inner {
   margin: 0 auto;
   padding: 100px 0 70px;
-  width: 960px;
+  width: 900px;
 }
 @media (min-width: 1600px) {
   .container .header-inner {
@@ -454,7 +454,7 @@ body {
 }
 .main-inner {
   margin: 0 auto;
-  width: 960px;
+  width: 900px;
 }
 @media (min-width: 1600px) {
   .container .main-inner {
@@ -468,7 +468,7 @@ body {
 .footer-inner {
   box-sizing: border-box;
   margin: 20px auto;
-  width: 960px;
+  width: 900px;
 }
 @media (min-width: 1600px) {
   .container .footer-inner {
@@ -2055,7 +2055,7 @@ img:hover {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #606f57;
+  background: #50adf7;
 }
 .links-of-blogroll {
   font-size: 13px;
