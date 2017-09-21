@@ -2055,7 +2055,7 @@ img:hover {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #ff9fff;
+  background: #606f57;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2900,7 +2900,7 @@ embed {
   -moz-box-shadow: 0 0 5px rgba(202,203,204,0.5);
 }
 .header {
-  background: url("http://owmyqjszs.bkt.clouddn.com/bg.jpg");
+  background: #111;
 }
 .site-subtitle {
   font-size: 15px;
