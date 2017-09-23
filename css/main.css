@@ -2055,7 +2055,7 @@ img:hover {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #ffff34;
+  background: #82ffff;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2900,7 +2900,7 @@ embed {
   -moz-box-shadow: 0 0 5px rgba(202,203,204,0.5);
 }
 .header {
-  background: url("http://owmyqjszs.bkt.clouddn.com/bg.jpg");
+  background: url("https://images.unsplash.com/photo-1477290813395-11a3d65976fe?ixlib=rb-0.3.5&q=99&fm=jpg&crop=entropy&cs=tinysrgb&w=2048&fit=max&s=2124d2dede0611bfa552c57947eb8adb");
 }
 .site-subtitle {
   font-size: 15px;
