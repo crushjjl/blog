@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[恭喜WE,恭喜RNG]]></title>
+    <url>%2F2017%2F10%2F24%2FaboutLol%2F</url>
+    <content type="text"><![CDATA[很久没来说说话了，原因了，如下： 一是因为懒懒懒； 二是作者水平在那里，没得啥子有水平的言语和高深的术语； 三则是因为最近忙着追剧（LOL-S7）； 在这里，还是先要恭喜WE！恭喜RNG! 希望可以进一步取得更好的成绩吧！……… 也希望作者可以好好修炼哈自己，写点有营养的东西出来！ “When you’re curious, you find lots of interesting things to do.” 给LPL加油打气哈！！！ （以下图借用于其他平台，侵删！！！） 早点睡觉吧。]]></content>
+      <categories>
+        <category>杂谈</category>
+      </categories>
+      <tags>
+        <tag>-lol -game</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[递归]]></title>
     <url>%2F2017%2F09%2F20%2Ffactorial%2F</url>
     <content type="text"><![CDATA[递归浅谈js里面的递归！ 递归函数是在一个函数通过名字调用自身的情况下构成的，示例如下。 12345678function factorial(num)&#123; if(num &lt;= 1)&#123; return 1; &#125;else&#123; return num * factorial(num-1); &#125;&#125;factorial(5); //120 上面的示例是一个经典递归阶乘函数。虽然这个函数表面看起来没什么问题，但是接下来你再看看，看仔细哟。 123var anotherFactorial = factorial; factorial = null; console.log(anotherFactorial(4));//报错！！！ 出错了？是的。 上述代码先把factorial()函数保存在变量anotherfactorial中，然后将factorial变量设置为null，结果指向原始函数的引用只剩下一个。但在接下来调用anotherfactorial()时，由于必须执行factorial(),而factorial已经不再是函数，所以就会导致错误。在这种情况下，怎么解决这个问题呢？使用arguments.callee可以解决这个问题。 我们知道，arguments.callee是一个指向正在执行的函数的指针，因此可以用它来实现对函数的递归调用，例如： 1234567function factorial(num)&#123; if(num &lt;= 1)&#123; return 1; &#125;else&#123; return num * arguments.callee(num-1);//手动加粗 &#125;&#125; 上面手动加粗的代码显示：通过使用arguments.callee代替函数名，可以确保无论怎样调用函数都不会出问题。因此，在编写递归函数时，使用arguments.callee总比使用函数名更保险。 但在严格模式下，不能通过脚本访问arguments.callee，访问这个属性会导致错误。不过，可以使用命名函数表达式来达成相同的效果。例如： 1234567var factorial = (function f(num)&#123; if(num &lt;= 1)&#123; return 1; &#125;else&#123; return num*f(num-1); &#125; &#125;); 通过以上的代码创建了名为f()的命名函数表达式，然后将它赋值给变量factorial。即便把函数复制给了另一个变量，函数的名字f仍然有效，所以递归调用照样能正确的完成。 这种方式在严格模式和非严格模式下都行得通。 总结： 递归： 函数体中调用函数自身–函数自己和自己玩。 “Don’t let yesterday take up too much of today.” 福利 看看别个怎么说的：一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。 不说了，该睡觉了。]]></content>
