@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jjlhi.com/"/>
-  <updated>2017-10-24T14:35:25.553Z</updated>
+  <updated>2017-10-24T15:39:38.520Z</updated>
   <id>http://jjlhi.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://jjlhi.com/2017/10/24/aboutLol/"/>
     <id>http://jjlhi.com/2017/10/24/aboutLol/</id>
     <published>2017-10-24T14:13:33.000Z</published>
-    <updated>2017-10-24T14:35:25.553Z</updated>
+    <updated>2017-10-24T15:39:38.520Z</updated>
     
     <content type="html"><![CDATA[<h1 id="很久没来说说话了，原因了，如下："><a href="#很久没来说说话了，原因了，如下：" class="headerlink" title="很久没来说说话了，原因了，如下："></a>很久没来说说话了，原因了，如下：</h1><ol>
 <li>一是因为懒懒懒；</li>
@@ -59,7 +59,9 @@
       <category term="杂谈" scheme="http://jjlhi.com/categories/%E6%9D%82%E8%B0%88/"/>
     
     
-      <category term="-lol -game" scheme="http://jjlhi.com/tags/lol-game/"/>
+      <category term="lol" scheme="http://jjlhi.com/tags/lol/"/>
+    
+      <category term="game" scheme="http://jjlhi.com/tags/game/"/>
     
   </entry>
   
