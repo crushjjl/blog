@@ -137,13 +137,13 @@
 
 
 
-<meta name="description" content="关于浏览器的回流(reflow）和重绘（repaint） 博文出自于：https://coolshell.cn/articles/9666.html 参考神文：《How Browsers Work》  浏览器的渲染原理简介 在谈到浏览器的回流和重绘的时候，就不得不说到浏览器的渲染原理  浏览器工作大流程 废话少说，先来看个图：   从上面这个图中，我们可以看到那么几个事： 1). 浏览器会解析三个">
+<meta name="description" content="关于浏览器的回流(reflow）和重绘（repaint） 博文出自于：https://coolshell.cn/articles/9666.html 参考神文：《How Browsers Work》  浏览器的渲染原理简介 在谈到浏览器的回流和重绘的时候，就不得不说到浏览器的渲染原理  浏览器工作大流程 废话少说，先来看个图：   从上面这个图中，我们可以看到那么几个事：">
 <meta name="keywords" content="JavaScript,Web,HTML,CSS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="关于浏览器的回流（reflow）和重绘（repaint）">
 <meta property="og:url" content="http://jjlhi.com/2017/09/20/browserRender/index.html">
 <meta property="og:site_name" content="Hello·Jiangjl">
-<meta property="og:description" content="关于浏览器的回流(reflow）和重绘（repaint） 博文出自于：https://coolshell.cn/articles/9666.html 参考神文：《How Browsers Work》  浏览器的渲染原理简介 在谈到浏览器的回流和重绘的时候，就不得不说到浏览器的渲染原理  浏览器工作大流程 废话少说，先来看个图：   从上面这个图中，我们可以看到那么几个事： 1). 浏览器会解析三个">
+<meta property="og:description" content="关于浏览器的回流(reflow）和重绘（repaint） 博文出自于：https://coolshell.cn/articles/9666.html 参考神文：《How Browsers Work》  浏览器的渲染原理简介 在谈到浏览器的回流和重绘的时候，就不得不说到浏览器的渲染原理  浏览器工作大流程 废话少说，先来看个图：   从上面这个图中，我们可以看到那么几个事：">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://coolshell.cn/wp-content/uploads/2013/05/Render-Process-768x250.jpg">
 <meta property="og:image" content="https://coolshell.cn/wp-content/uploads/2013/05/DOM-Tree-01.jpg">
@@ -153,10 +153,10 @@
 <meta property="og:image" content="https://coolshell.cn/wp-content/uploads/2013/05/CSS-Content-Tree-Example.jpg">
 <meta property="og:image" content="https://coolshell.cn/wp-content/uploads/2013/05/Firefox-style-context-tree.png">
 <meta property="og:image" content="https://coolshell.cn/wp-content/uploads/2013/05/Render-Process-Skipping-1024x282.jpg">
-<meta property="og:updated_time" content="2017-11-15T10:35:32.162Z">
+<meta property="og:updated_time" content="2017-11-15T14:59:15.866Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于浏览器的回流（reflow）和重绘（repaint）">
-<meta name="twitter:description" content="关于浏览器的回流(reflow）和重绘（repaint） 博文出自于：https://coolshell.cn/articles/9666.html 参考神文：《How Browsers Work》  浏览器的渲染原理简介 在谈到浏览器的回流和重绘的时候，就不得不说到浏览器的渲染原理  浏览器工作大流程 废话少说，先来看个图：   从上面这个图中，我们可以看到那么几个事： 1). 浏览器会解析三个">
+<meta name="twitter:description" content="关于浏览器的回流(reflow）和重绘（repaint） 博文出自于：https://coolshell.cn/articles/9666.html 参考神文：《How Browsers Work》  浏览器的渲染原理简介 在谈到浏览器的回流和重绘的时候，就不得不说到浏览器的渲染原理  浏览器工作大流程 废话少说，先来看个图：   从上面这个图中，我们可以看到那么几个事：">
 <meta name="twitter:image" content="https://coolshell.cn/wp-content/uploads/2013/05/Render-Process-768x250.jpg">
 
 
@@ -534,6 +534,7 @@
 </ul>
 <p><img src="https://coolshell.cn/wp-content/uploads/2013/05/Render-Process-768x250.jpg" alt=""></p>
 <p><strong>从上面这个图中，我们可以看到那么几个事：</strong></p>
+<a id="more"></a>
 <p>1). 浏览器会解析三个东西：</p>
 <ul>
 <li>一个是HTML/SVG/XHTML，事实上，Webkit有三个C++的类对应这三类文档。解析这三种文件会产生一个DOM Tree。</li>

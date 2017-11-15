@@ -70,7 +70,7 @@
     <link href="http://jjlhi.com/2017/09/20/browserRender/"/>
     <id>http://jjlhi.com/2017/09/20/browserRender/</id>
     <published>2017-09-20T14:09:47.000Z</published>
-    <updated>2017-11-15T10:35:32.162Z</updated>
+    <updated>2017-11-15T14:59:15.866Z</updated>
     
     <content type="html"><![CDATA[<h1 id="关于浏览器的回流-reflow）和重绘（repaint）"><a href="#关于浏览器的回流-reflow）和重绘（repaint）" class="headerlink" title="关于浏览器的回流(reflow）和重绘（repaint）"></a>关于浏览器的回流(reflow）和重绘（repaint）</h1><blockquote>
 <p>博文出自于：<a href="https://coolshell.cn/articles/9666.html" target="_blank" rel="external">https://coolshell.cn/articles/9666.html</a></p>
@@ -84,6 +84,7 @@
 </ul>
 <p><img src="https://coolshell.cn/wp-content/uploads/2013/05/Render-Process-768x250.jpg" alt=""></p>
 <p><strong>从上面这个图中，我们可以看到那么几个事：</strong></p>
+<a id="more"></a>
 <p>1). 浏览器会解析三个东西：</p>
 <ul>
 <li>一个是HTML/SVG/XHTML，事实上，Webkit有三个C++的类对应这三类文档。解析这三种文件会产生一个DOM Tree。</li>
@@ -203,7 +204,18 @@
     
     <summary type="html">
     
-      &lt;h1 id=&quot;关于浏览器的回流-reflow）和重绘（repaint）&quot;&gt;&lt;a href=&quot;#关于浏览器的回流-reflow）和重绘（repaint）&quot; class=&quot;headerlink&quot; title=&quot;关于浏览器的回流(reflow）和重绘（repaint）&quot;&gt;&lt;/a&gt;关于
+      &lt;h1 id=&quot;关于浏览器的回流-reflow）和重绘（repaint）&quot;&gt;&lt;a href=&quot;#关于浏览器的回流-reflow）和重绘（repaint）&quot; class=&quot;headerlink&quot; title=&quot;关于浏览器的回流(reflow）和重绘（repaint）&quot;&gt;&lt;/a&gt;关于浏览器的回流(reflow）和重绘（repaint）&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;博文出自于：&lt;a href=&quot;https://coolshell.cn/articles/9666.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://coolshell.cn/articles/9666.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;参考神文：&lt;a href=&quot;http://taligarsiel.com/Projects/howbrowserswork1.htm&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;《How Browsers Work》&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;浏览器的渲染原理简介&quot;&gt;&lt;a href=&quot;#浏览器的渲染原理简介&quot; class=&quot;headerlink&quot; title=&quot;浏览器的渲染原理简介&quot;&gt;&lt;/a&gt;浏览器的渲染原理简介&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;在谈到浏览器的回流和重绘的时候，就不得不说到浏览器的渲染原理&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;浏览器工作大流程&quot;&gt;&lt;a href=&quot;#浏览器工作大流程&quot; class=&quot;headerlink&quot; title=&quot;浏览器工作大流程&quot;&gt;&lt;/a&gt;浏览器工作大流程&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;废话少说，先来看个图：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&quot;https://coolshell.cn/wp-content/uploads/2013/05/Render-Process-768x250.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;从上面这个图中，我们可以看到那么几个事：&lt;/strong&gt;&lt;/p&gt;
     
     </summary>
     
