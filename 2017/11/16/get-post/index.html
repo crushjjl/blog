@@ -145,7 +145,7 @@
 <meta property="og:site_name" content="Hello·Jiangjl">
 <meta property="og:description" content="关于HTTP协议中GET和POST方法的区别说在前面的话一直以来，只要提到HTTP协议中GET和POST方法的区别，我就会想到：  get是从服务器上获取数据，post是向服务器传送数据。 get是把参数数据队列加到提交表单的ACTION属性所指的URL中，值和表单内各个字段一一对应，在URL中可以看到。post是通过HTTP post机制，将表单内各个字段与其内容放置在HTML HEADER内一">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-11-16T15:23:17.145Z">
+<meta property="og:updated_time" content="2017-11-16T15:26:05.237Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于HTTP协议中GET和POST方法的区别">
 <meta name="twitter:description" content="关于HTTP协议中GET和POST方法的区别说在前面的话一直以来，只要提到HTTP协议中GET和POST方法的区别，我就会想到：  get是从服务器上获取数据，post是向服务器传送数据。 get是把参数数据队列加到提交表单的ACTION属性所指的URL中，值和表单内各个字段一一对应，在URL中可以看到。post是通过HTTP post机制，将表单内各个字段与其内容放置在HTML HEADER内一">
@@ -580,10 +580,11 @@
 </tbody>
 </table>
 <p><strong>以上的说法仅给出了一些表面现像上的区别，但并没有解释为什么，因此存在一些不妥之处，至于不妥在何处，请继续看下去…</strong></p>
+<a id="more"></a>
 <h2 id="99-的人都理解错了HTTP中GET与POST的区别"><a href="#99-的人都理解错了HTTP中GET与POST的区别" class="headerlink" title="99%的人都理解错了HTTP中GET与POST的区别"></a>99%的人都理解错了HTTP中GET与POST的区别</h2><blockquote>
 <p>参考：<a href="http://mp.weixin.qq.com/s?__biz=MzI3NzIzMzg3Mw==&amp;mid=100000054&amp;idx=1&amp;sn=71f6c214f3833d9ca20b9f7dcd9d33e4#rd" target="_blank" rel="external">99%的人都理解错了HTTP中GET与POST的区别</a></p>
 </blockquote>
-<p>有一篇文章《<a href="http://mp.weixin.qq.com/s?__biz=MzI3NzIzMzg3Mw==&amp;mid=100000054&amp;idx=1&amp;sn=71f6c214f3833d9ca20b9f7dcd9d33e4#rd" target="_blank" rel="external">99%的人理解错 HTTP 中 GET 与 POST 的区别</a>)，否定了上述回答：“很遗憾，这不是我们要的回答！”，作者说：</p>
+<p>有一篇文章《<a href="http://mp.weixin.qq.com/s?__biz=MzI3NzIzMzg3Mw==&amp;mid=100000054&amp;idx=1&amp;sn=71f6c214f3833d9ca20b9f7dcd9d33e4#rd" target="_blank" rel="external">99%的人理解错 HTTP 中 GET 与 POST 的区别</a>》，否定了上述回答：“很遗憾，这不是我们要的回答！”，作者说：</p>
 <blockquote>
 <p>GET和POST本质上就是TCP链接，并无差别。但是由于HTTP的规定和浏览器/服务器的限制，导致他们在应用过程中体现出一些不同。 GET和POST还有一个重大区别，简单的说：GET产生一个TCP数据包；POST产生两个TCP数据包。<br>对于GET方式的请求，浏览器会把http header和data一并发送出去，服务器响应200（返回数据）； 而对于POST，浏览器先发送header，服务器响应100 continue，浏览器再发送data，服务器响应200 ok（返回数据）。</p>
 </blockquote>
