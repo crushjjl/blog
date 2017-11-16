@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jjlhi.com/"/>
-  <updated>2017-11-16T15:26:05.237Z</updated>
+  <updated>2017-11-16T15:29:09.080Z</updated>
   <id>http://jjlhi.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://jjlhi.com/2017/11/16/get-post/"/>
     <id>http://jjlhi.com/2017/11/16/get-post/</id>
     <published>2017-11-16T15:20:13.000Z</published>
-    <updated>2017-11-16T15:26:05.237Z</updated>
+    <updated>2017-11-16T15:29:09.080Z</updated>
     
     <content type="html"><![CDATA[<h1 id="关于HTTP协议中GET和POST方法的区别"><a href="#关于HTTP协议中GET和POST方法的区别" class="headerlink" title="关于HTTP协议中GET和POST方法的区别"></a>关于HTTP协议中GET和POST方法的区别</h1><h2 id="说在前面的话"><a href="#说在前面的话" class="headerlink" title="说在前面的话"></a>说在前面的话</h2><p>一直以来，只要提到HTTP协议中GET和POST方法的区别，我就会想到：</p>
 <ol>
@@ -159,7 +159,7 @@
 <hr>
 <p>博主前端小白，才疏学浅，若发现文章有任何不妥的地方，可直接<a href="mailto:jjl1993@foxamail.com" title="jjl1993@foxamail.com" target="_blank" rel="external">E-mail</a>!</p>
 <blockquote>
-<p>““Without new experiences, something inside of<br>us sleeps. The sleeper must awaken.””</p>
+<p>“Without new experiences, something inside of<br>us sleeps. The sleeper must awaken.”</p>
 </blockquote>
 ]]></content>
     
