@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>关于HTTP协议中GET和POST方法的区别 | Hello·Jiangjl</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="关于HTTP协议中GET和POST方法的区别说在前面的话一直以来，只要提到HTTP协议中GET和POST方法的区别，我就会想到：  get是从服务器上获取数据，post是向服务器传送数据。 get是把参数数据队列加到提交表单的ACTION属性所指的URL中，值和表单内各个字段一一对应，在URL中可以看到。post是通过HTTP post机制，将表单内各个字段与其内容放置在HTML HEADER内一">
+<meta name="keywords" content="HTTP,GET,POST">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于HTTP协议中GET和POST方法的区别">
+<meta property="og:url" content="http://jjlhi.com/2017/11/16/get-post/index.html">
+<meta property="og:site_name" content="Hello·Jiangjl">
+<meta property="og:description" content="关于HTTP协议中GET和POST方法的区别说在前面的话一直以来，只要提到HTTP协议中GET和POST方法的区别，我就会想到：  get是从服务器上获取数据，post是向服务器传送数据。 get是把参数数据队列加到提交表单的ACTION属性所指的URL中，值和表单内各个字段一一对应，在URL中可以看到。post是通过HTTP post机制，将表单内各个字段与其内容放置在HTML HEADER内一">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-11-16T15:29:09.080Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于HTTP协议中GET和POST方法的区别">
+<meta name="twitter:description" content="关于HTTP协议中GET和POST方法的区别说在前面的话一直以来，只要提到HTTP协议中GET和POST方法的区别，我就会想到：  get是从服务器上获取数据，post是向服务器传送数据。 get是把参数数据队列加到提交表单的ACTION属性所指的URL中，值和表单内各个字段一一对应，在URL中可以看到。post是通过HTTP post机制，将表单内各个字段与其内容放置在HTML HEADER内一">
+  
+    <link rel="alternate" href="/atom.xml" title="Hello·Jiangjl" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hello·Jiangjl</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Believe you can and you&#39;re halfway there.</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://jjlhi.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-get-post" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/16/get-post/" class="article-date">
+  <time datetime="2017-11-16T15:20:13.000Z" itemprop="datePublished">2017-11-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Web/">Web</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      关于HTTP协议中GET和POST方法的区别
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="关于HTTP协议中GET和POST方法的区别"><a href="#关于HTTP协议中GET和POST方法的区别" class="headerlink" title="关于HTTP协议中GET和POST方法的区别"></a>关于HTTP协议中GET和POST方法的区别</h1><h2 id="说在前面的话"><a href="#说在前面的话" class="headerlink" title="说在前面的话"></a>说在前面的话</h2><p>一直以来，只要提到HTTP协议中GET和POST方法的区别，我就会想到：</p>
+<ol>
+<li>get是从服务器上获取数据，post是向服务器传送数据。</li>
+<li>get是把参数数据队列加到提交表单的ACTION属性所指的URL中，值和表单内各个字段一一对应，在URL中可以看到。post是通过HTTP post机制，将表单内各个字段与其内容放置在HTML HEADER内一起传送到ACTION属性所指的URL地址。用户看不到这个过程。</li>
+<li>对于get方式，服务器端用Request.QueryString获取变量的值，对于post方式，服务器端用Request.Form获取提交的数据。</li>
+<li>get传送的数据量较小，不能大于2KB。post传送的数据量较大，一般被默认为不受限制。但理论上，IIS4中最大量为80KB，IIS5中为100KB。</li>
+<li>get安全性非常低，post安全性较高。但是执行效率却比Post方法好。 </li>
+<li>……  </li>
+</ol>
+<p>又或者是参照于w3schools关于这个问题的解答：<a href="http://www.w3school.com.cn/tags/html_ref_httpmethods.asp" target="_blank" rel="external">HTTP 方法：GET 对比 POST</a> 列出了一般的理解：</p>
+<table>
+<thead>
+<tr>
+<th>请求方法</th>
+<th>GET</th>
+<th>POST</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>后退按钮/刷新</td>
+<td>无害</td>
+<td>数据会被重新提交（浏览器应该告知用户数据会被重新提交）。</td>
+</tr>
+<tr>
+<td>书签</td>
+<td>可收藏为书签</td>
+<td>不可收藏为书签</td>
+</tr>
+<tr>
+<td>缓存</td>
+<td>能被缓存</td>
+<td>不能缓存</td>
+</tr>
+<tr>
+<td>编码类型</td>
+<td>application/x-www-form-urlencoded</td>
+<td>application/x-www-form-urlencoded 或 multipart/form-data。为二进制数据使用多重编码。</td>
+</tr>
+<tr>
+<td>历史</td>
+<td>参数保留在浏览器历史中。</td>
+<td>参数不会保存在浏览器历史中。</td>
+</tr>
+<tr>
+<td>对数据长度的限制</td>
+<td>是的。当发送数据时，GET 方法向 URL 添加数据；URL 的长度是受限制的（URL 的最大长度是 2048 个字符）。</td>
+<td>无限制。</td>
+</tr>
+<tr>
+<td>对数据类型的限制</td>
+<td>只允许 ASCII 字符。</td>
+<td>没有限制。也允许二进制数据。</td>
+</tr>
+<tr>
+<td>安全性</td>
+<td>与 POST 相比，GET 的安全性较差，因为所发送的数据是 URL 的一部分。在发送密码或其他敏感信息时绝不要使用 GET ！</td>
+<td>POST 比 GET 更安全，因为参数不会被保存在浏览器历史或 web 服务器日志中。</td>
+</tr>
+<tr>
+<td>可见性</td>
+<td>数据在 URL 中对所有人都是可见的。</td>
+<td>数据不会显示在 URL 中。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>以上的说法仅给出了一些表面现像上的区别，但并没有解释为什么，因此存在一些不妥之处，至于不妥在何处，请继续看下去…</strong></p>
+<a id="more"></a>
+<h2 id="99-的人都理解错了HTTP中GET与POST的区别"><a href="#99-的人都理解错了HTTP中GET与POST的区别" class="headerlink" title="99%的人都理解错了HTTP中GET与POST的区别"></a>99%的人都理解错了HTTP中GET与POST的区别</h2><blockquote>
+<p>参考：<a href="http://mp.weixin.qq.com/s?__biz=MzI3NzIzMzg3Mw==&amp;mid=100000054&amp;idx=1&amp;sn=71f6c214f3833d9ca20b9f7dcd9d33e4#rd" target="_blank" rel="external">99%的人都理解错了HTTP中GET与POST的区别</a></p>
+</blockquote>
+<p>有一篇文章《<a href="http://mp.weixin.qq.com/s?__biz=MzI3NzIzMzg3Mw==&amp;mid=100000054&amp;idx=1&amp;sn=71f6c214f3833d9ca20b9f7dcd9d33e4#rd" target="_blank" rel="external">99%的人理解错 HTTP 中 GET 与 POST 的区别</a>》，否定了上述回答：“很遗憾，这不是我们要的回答！”，作者说：</p>
+<blockquote>
+<p>GET和POST本质上就是TCP链接，并无差别。但是由于HTTP的规定和浏览器/服务器的限制，导致他们在应用过程中体现出一些不同。 GET和POST还有一个重大区别，简单的说：GET产生一个TCP数据包；POST产生两个TCP数据包。<br>对于GET方式的请求，浏览器会把http header和data一并发送出去，服务器响应200（返回数据）； 而对于POST，浏览器先发送header，服务器响应100 continue，浏览器再发送data，服务器响应200 ok（返回数据）。</p>
+</blockquote>
+<p>都讲到TCP了，感觉很高大上有木有，起码当时看到这篇文章的我是信了的。<br>（博主当时看了这边文章也觉得醍醐灌顶，受益匪浅，直到…）</p>
+<h2 id="剧情反转？"><a href="#剧情反转？" class="headerlink" title="剧情反转？"></a>剧情反转？</h2><h3 id="听说『99-的人都理解错了-HTTP-中-GET-与-POST-的区别』？？"><a href="#听说『99-的人都理解错了-HTTP-中-GET-与-POST-的区别』？？" class="headerlink" title="听说『99% 的人都理解错了 HTTP 中 GET 与 POST 的区别』？？"></a>听说『99% 的人都理解错了 HTTP 中 GET 与 POST 的区别』？？</h3><blockquote>
+<p>参考：<a href="https://zhuanlan.zhihu.com/p/25028045" target="_blank" rel="external">听说『99% 的人都理解错了 HTTP 中 GET 与 POST 的区别』？？</a></p>
+</blockquote>
+<p>直到又在逛知乎时又看到了这篇文章：<a href="https://zhuanlan.zhihu.com/p/25028045" target="_blank" rel="external">听说『99% 的人都理解错了 HTTP 中 GET 与 POST 的区别』？？</a>，指出了前文的两个错误：</p>
+<blockquote>
+<p>100 continue 只有在请求里带了Expect: 100-continueheader 的时候才有意义。<br>When the request contains an Expect header field that includes a 100-continue expectation, the 100 response indicates that the server wishes to receive the request payload body, as described in Section 5.1.1. The client ought to continue sending the request and discard the 100 response. If the request did not contain an Expect header field containing the 100-continue expectation, the client can simply discard this interim response.</p>
+<p>我们通常在讨论 GET vs POST 的时候，实际上讨论的是 specification，而不是 implementation。什么是 specification？说白了就是相关的 RFC。implementation 则是所有实现了 specification 中描述的代码/库/产品，比如 curl，Python 的 requests 库，或者 Chrome。<br>POST 请求怎么发送，根本就不是这段 RFC 在讨论的事情。RFC 中只说明了 100 continue 和 Expect header 的联系，比如你想在 GET 请求里带 body，一样可以发送 Expect: 100-continue 并等待 100 continue，这是符合标准的。<br>也就是说，『XHR 发送两个 TCP packets』是关于 implementation 的知识，而不是关于 specification 的知识。你不能说『Chrome 在 AJAX POST 的时候会发两个 TCP packets，GET 只会发一个』是 GET 和 POST 的区别，正如你不能因为北京 PM 2.5 经常爆表就说国家关于工业废气排放的标准有问题。</p>
+</blockquote>
+<p>说得似乎更有道理，而且也搬出了RFC，specification，implementation这些高端词汇，这下子我这个吃瓜群众再也坐不住了，决定亲自去研究一下。</p>
+<h2 id="RFC探秘"><a href="#RFC探秘" class="headerlink" title="RFC探秘"></a>RFC探秘</h2><p>首先，什么是RFC呢？Wiki上面的定义是：</p>
+<blockquote>
+<p>征求意见稿（英语：Request For Comments，缩写为RFC），是由互联网工程任务组（IETF）发布的一系列备忘录。文件收集了有关互联网相关信息，以及UNIX和互联网社区的软件文件，以编号排定。目前RFC文件是由互联网协会（ISOC）赞助发行。</p>
+</blockquote>
+<p>简单理解RFC就是互联网的规范，我们通常所说的「协议」就是以RFC的形式存在，而现行的HTTP/1.1规范的RFC有如下几个： <a href="https://tools.ietf.org/html/rfc7230" target="_blank" rel="external">RFC7230</a>， <a href="https://tools.ietf.org/html/rfc7231" target="_blank" rel="external">RFC7231</a>， <a href="https://tools.ietf.org/html/rfc7232" target="_blank" rel="external">RFC7232</a>， <a href="https://tools.ietf.org/html/rfc7233" target="_blank" rel="external">RFC7233</a>， <a href="https://tools.ietf.org/html/rfc7234" target="_blank" rel="external">RFC7234</a>， <a href="https://tools.ietf.org/html/rfc7235" target="_blank" rel="external">RFC7235</a>。 其中RFC7231里的Section 4. Request Methods涉及到了几个HTTP方法，接下来仔细阅读这一章节。</p>
+<blockquote>
+<p>The request method token is the primary source of request semantics; it indicates the purpose for which the client has made this request and what is expected by the client as a successful result.</p>
+</blockquote>
+<p>这里牵涉到一个很重要的词语：<strong>semantic</strong> 「语义」，那么什么是语义呢？这一篇文章给出了解释：<a href="http://blog.darkmi.com/2013/04/10/3018.html" target="_blank" rel="external">语法和语义的区别</a>。 </p>
+<blockquote>
+<p>一种语言是合法句子的集合。什么样的句子是合法的呢？可以从两方面来判断：语法和语义。语法是和文法结构有关，然而语义是和按照这个结构所组合的单词符号的意义有关。合理的语法结构并不表明语义是合法的。例如我们常说：我上大学，这个句子是符合语法规则的，也符合语义规则。但是大学上我，虽然符合语法规则，但没有什么意义，所以说是不符合语义的。</p>
+</blockquote>
+<ul>
+<li><p>对于HTTP请求来说，语法是指请求响应的格式，比如请求第一行必须是 方法名 URI 协议/版本 这样的格式，具体内容可以参见之前写的《图解HTTP》读书笔记里面的内容，凡是符合这个格式的请求都是合法的。</p>
+</li>
+<li><p>语义则定义了这一类型的请求具有什么样的性质。比如GET的语义就是「获取资源」，POST的语义是「处理资源」，那么在具体实现这两个方法时，就必须考虑其语义，做出符合其语义的行为。</p>
+</li>
+<li><p>当然在符合语法的前提下实现违背语义的行为也是可以做到的，比如使用GET方法修改用户信息，POST获取资源列表，这样就只能说这个请求是「合法」的，但不是「符合语义」的。 写到这里突然联想到XML里面的两个概念：Well Formed和Valid，似乎也正是语法和语义的理念呢。</p>
+</li>
+</ul>
+<p>上文说到方法是请求语义的主要来源，也即是还有次要来源，一些请求Header可以进一步修饰请求的语义，比如一个带上了 Range Header的GET请求就变成了部分请求。</p>
+<p>RFC7231里紧接着定义了HTTP方法的几个特性：</p>
+<ol>
+<li>Safe - 安全<br>这里的「安全」和通常理解的「安全」意义不同，如果一个方法的语义在本质上是「只读」的，那么这个方法就是安全的。客户端向服务端的资源发起的请求如果使用了是安全的方法，就不应该引起服务端任何的状态变化，因此也是无害的。 此RFC定义，GET, HEAD, OPTIONS 和 TRACE 这几个方法是安全的。<br>但是这个定义只是规范，并不能保证方法的实现也是安全的，服务端的实现可能会不符合方法语义，正如上文说过的使用GET修改用户信息的情况。<br>引入安全这个概念的目的是为了方便网络爬虫和缓存，以免调用或者缓存某些不安全方法时引起某些意外的后果。User Agent（浏览器）应该在执行安全和不安全方法时做出区分对待，并给用户以提示。</li>
+<li>Idempotent - 幂等<br>幂等的概念是指同一个请求方法执行多次和仅执行一次的效果完全相同。按照RFC规范，PUT，DELETE和安全方法都是幂等的。同样，这也仅仅是规范，服务端实现是否幂等是无法确保的。<br>引入幂等主要是为了处理同一个请求重复发送的情况，比如在请求响应前失去连接，如果方法是幂等的，就可以放心地重发一次请求。这也是浏览器在后退/刷新时遇到POST会给用户提示的原因：POST语义不是幂等的，重复请求可能会带来意想不到的后果。</li>
+<li>Cacheable - 可缓存性<br>顾名思义就是一个方法是否可以被缓存，此RFC里GET，HEAD和某些情况下的POST都是可缓存的，但是绝大多数的浏览器的实现里仅仅支持GET和HEAD。关于缓存的更多内容可以去看RFC7234。</li>
+</ol>
+<p>在这三个特性里一直在强调同一个事情，那就是协议不等于实现：协议规定安全在实现里不一定安全，协议规定幂等在实现里不一定幂等，协议规定可缓存在实现里不一定可缓存。这其实就是上面那个作者提到的specification和implementation的关系。</p>
+<h2 id="语义之争"><a href="#语义之争" class="headerlink" title="语义之争"></a>语义之争</h2><p>走到这一步，其实就明白了要理解这两个方法的区别，<strong>本质上是 「语义」的对比而不是「语法」的对比，是「Specification」的对比而不是「Implementation」的对比。</strong></p>
+<p>关于这两种方法的语义，RFC7231里原文已经写得很好了：</p>
+<blockquote>
+<p>The GET method requests transfer of a current selected representation for the target resource. GET is the primary mechanism of information retrieval and the focus of almost all performance optimizations. Hence, when people speak of retrieving some identifiable information via HTTP, they are generally referring to making a GET request.<br>A payload within a GET request message has no defined semantics; sending a payload body on a GET request might cause some existing implementations to reject the request.</p>
+<p>The POST method requests that the target resource process the representation enclosed in the request according to the resource’s own specific semantics.</p>
+</blockquote>
+<p>勉强渣翻一下，再加上点自己的理解：</p>
+<ul>
+<li><p>GET的语义是请求获取指定的资源。GET方法是安全、幂等、可缓存的（除非有 Cache-Control Header的约束）,GET方法的报文主体没有任何语义。</p>
+</li>
+<li><p>POST的语义是根据请求负荷（报文主体）对指定的资源做出处理，具体的处理方式视资源类型而不同。POST不安全，不幂等，（大部分实现）不可缓存。为了针对其不可缓存性，有一系列的方法来进行优化，以后有机会再研究（FLAG已经立起–(<em>^_^</em>)）。</p>
+</li>
+<li><p>还是举一个通俗栗子吧，在微博这个场景里，GET的语义会被用在「看看我的Timeline上最新的20条微博」这样的场景，而POST的语义会被用在「发微博、评论、点赞」这样的场景中。</p>
+</li>
+</ul>
+<p>总结：本文从通常的理解出发，经过一次质疑和又一次反质疑，一波三折，最终通过阅读RFC规范加深了对于HTTP方法的理解，真是一次令人愉快的探究之旅~我最大的感受就是：不要人云亦云，要坚持独立思考，不要满足于二手知识，要努力追本溯源。</p>
+<h6 id="总结：规范是规范，实施是实施。如果非要不按照规范去实施，可能结果能到达目的，但是却不一定是大家所想要的。上述关于HTTP协议中GET和POST方法的区别，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我，侵删！"><a href="#总结：规范是规范，实施是实施。如果非要不按照规范去实施，可能结果能到达目的，但是却不一定是大家所想要的。上述关于HTTP协议中GET和POST方法的区别，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我，侵删！" class="headerlink" title="总结：规范是规范，实施是实施。如果非要不按照规范去实施，可能结果能到达目的，但是却不一定是大家所想要的。上述关于HTTP协议中GET和POST方法的区别，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我，侵删！"></a>总结：规范是规范，实施是实施。如果非要不按照规范去实施，可能结果能到达目的，但是却不一定是大家所想要的。上述关于HTTP协议中GET和POST方法的区别，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我，侵删！</h6><hr>
+<blockquote>
+<p>原文出处:<br><a href="https://sunshinevvv.coding.me/blog/2017/02/09/HttpGETv.s.POST/" target="_blank" rel="external">https://sunshinevvv.coding.me/blog/2017/02/09/HttpGETv.s.POST/</a></p>
+<p>参考：<br><a href="https://sunshinevvv.coding.me/blog/2017/02/09/HttpGETv.s.POST/" target="_blank" rel="external">HTTP协议中GET和POST方法的区别</a>  </p>
+</blockquote>
+<hr>
+<p>博主前端小白，才疏学浅，若发现文章有任何不妥的地方，可直接<a href="mailto:jjl1993@foxamail.com" title="jjl1993@foxamail.com" target="_blank" rel="external">E-mail</a>!</p>
+<blockquote>
+<p>“Without new experiences, something inside of<br>us sleeps. The sleeper must awaken.”</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://jjlhi.com/2017/11/16/get-post/" data-id="cjc0lle5n00094kiymw4fgmd6" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GET/">GET</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/POST/">POST</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/11/15/array-to-heavy/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">关于数组去重的总结</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web/">Web</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/解释说明/">解释说明</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Array/">Array</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Description/">Description</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GET/">GET</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/POST/">POST</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/game/">game</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lol/">lol</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sports/">sports</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Array/" style="font-size: 10px;">Array</a> <a href="/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/tags/Description/" style="font-size: 10px;">Description</a> <a href="/tags/GET/" style="font-size: 10px;">GET</a> <a href="/tags/HTML/" style="font-size: 10px;">HTML</a> <a href="/tags/HTTP/" style="font-size: 10px;">HTTP</a> <a href="/tags/JavaScript/" style="font-size: 20px;">JavaScript</a> <a href="/tags/POST/" style="font-size: 10px;">POST</a> <a href="/tags/Web/" style="font-size: 10px;">Web</a> <a href="/tags/game/" style="font-size: 10px;">game</a> <a href="/tags/lol/" style="font-size: 10px;">lol</a> <a href="/tags/sports/" style="font-size: 10px;">sports</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/16/get-post/">关于HTTP协议中GET和POST方法的区别</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/15/array-to-heavy/">关于数组去重的总结</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/24/aboutLol/">恭喜WE,恭喜RNG</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/20/browserRender/">关于浏览器的回流（reflow）和重绘（repaint）</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/20/factorial/">递归</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jiangjl<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

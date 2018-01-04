@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>关于数组去重的总结 | Hello·Jiangjl</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="关于JS数组去重的方法总结方法一： 双层循环，外层循环元素，内层循环时比较值。如果有相同的值则跳过，不相同则push进数组12345678910111213//常规方法function unique(arr)&amp;#123;    var res = [];    for (var i = 0; i &amp;lt; arr.length; i++) &amp;#123;        for (var j = i+">
+<meta name="keywords" content="JavaScript,Array">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于数组去重的总结">
+<meta property="og:url" content="http://jjlhi.com/2017/11/15/array-to-heavy/index.html">
+<meta property="og:site_name" content="Hello·Jiangjl">
+<meta property="og:description" content="关于JS数组去重的方法总结方法一： 双层循环，外层循环元素，内层循环时比较值。如果有相同的值则跳过，不相同则push进数组12345678910111213//常规方法function unique(arr)&amp;#123;    var res = [];    for (var i = 0; i &amp;lt; arr.length; i++) &amp;#123;        for (var j = i+">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-11-15T15:05:22.648Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于数组去重的总结">
+<meta name="twitter:description" content="关于JS数组去重的方法总结方法一： 双层循环，外层循环元素，内层循环时比较值。如果有相同的值则跳过，不相同则push进数组12345678910111213//常规方法function unique(arr)&amp;#123;    var res = [];    for (var i = 0; i &amp;lt; arr.length; i++) &amp;#123;        for (var j = i+">
+  
+    <link rel="alternate" href="/atom.xml" title="Hello·Jiangjl" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hello·Jiangjl</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Believe you can and you&#39;re halfway there.</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://jjlhi.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-array-to-heavy" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/15/array-to-heavy/" class="article-date">
+  <time datetime="2017-11-15T15:03:48.000Z" itemprop="datePublished">2017-11-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JavaScript/">JavaScript</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      关于数组去重的总结
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="关于JS数组去重的方法总结"><a href="#关于JS数组去重的方法总结" class="headerlink" title="关于JS数组去重的方法总结"></a>关于JS数组去重的方法总结</h1><h2 id="方法一："><a href="#方法一：" class="headerlink" title="方法一："></a>方法一：</h2><ul>
+<li>双层循环，外层循环元素，内层循环时比较值。如果有相同的值则跳过，不相同则push进数组<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">//常规方法</div><div class="line">function unique(arr)&#123;</div><div class="line">    var res = [];</div><div class="line">    for (var i = 0; i &lt; arr.length; i++) &#123;</div><div class="line">        for (var j = i+1; j &lt; arr.length; j++) &#123;</div><div class="line">            if (arr[i] === arr[j]) &#123;</div><div class="line">                j = ++i;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        res.push(arr[i]);</div><div class="line">    &#125;</div><div class="line">    return res;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">// 类似写法，主要思路和判断方法是一样的，只是细节有点小改动</div><div class="line">function unique(arr)&#123;</div><div class="line">    var res = [arr[0]];</div><div class="line">    for (var i = 1; i &lt; arr.length; i++) &#123;</div><div class="line">        var repeat = false;</div><div class="line">        for (var j = 0; j &lt; res.length; j++) &#123;</div><div class="line">            if (arr[i] === res[j]) &#123;</div><div class="line">                repeat = true;</div><div class="line">                break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        if (!repeat) &#123;</div><div class="line">            res.push(arr[i]);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return res;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">//类似思路：主要都是通过双重循环遍历，利用splice直接在原数组进行操作</div><div class="line">//双层循环，外层循环元素，内层循环时比较值</div><div class="line">//值相同时，则删去这个值</div><div class="line">//注意点:删除元素之后，需要将数组的长度也减1.</div><div class="line">Array.prototype.unique = function ()&#123;</div><div class="line">    var arr = this,</div><div class="line">        i,</div><div class="line">        j,</div><div class="line">        len = arr.length;</div><div class="line"></div><div class="line">    for(i = 0; i &lt; len; i++)&#123;</div><div class="line">        for(j = i + 1; j &lt; len; j++)&#123;</div><div class="line">            if(arr[i] == arr[j])&#123;</div><div class="line">                arr.splice(j,1);</div><div class="line">                len--;</div><div class="line">                j--;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return arr;</div><div class="line">&#125;;</div><div class="line">var a = [1,2,3,4,5,6,5,3,2,4,56,4,1,2,1,1,1,1,1,1,];</div><div class="line">var b = a.unique();</div><div class="line">console.log(b.toString()); //1,2,3,4,5,6,56</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><ul>
+<li>利用indexOf()方法，下标索引查询，需要考虑indexOf该方法的兼容性<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">var indexOf = [].indexOf </div><div class="line">    ?</div><div class="line">    function indexOf(arr,item)&#123;</div><div class="line">        return arr.indexOf(item);</div><div class="line">    &#125;</div><div class="line">    :</div><div class="line">    function indexOf(arr,item)&#123;</div><div class="line">        for (var i = 0; i &lt; arr.length; i++) &#123;//这里遍历方法可以选择forEach，map，filter方法也可以实现，看你喜欢.</div><div class="line">            if (arr[i] === item) &#123;</div><div class="line">                return i;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return -1;</div><div class="line">    &#125;</div><div class="line">function unique(arr)&#123;</div><div class="line">    var res = [];</div><div class="line">    for (var i = 0; i &lt; arr.length; i++) &#123;</div><div class="line">        if (res.indexOf(arr[i]) === -1) &#123;</div><div class="line">            res.push(arr[i]);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return res;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="方法三（推荐）"><a href="#方法三（推荐）" class="headerlink" title="方法三（推荐）"></a>方法三（推荐）</h2><ul>
+<li>利用对象的属性不能相同的特点进行去重，考虑性能和优化</li>
+<li>创建一个新的数组存放结果</li>
+<li>创建一个空对象</li>
+<li>for循环时，每次取出一个元素与对象进行对比，如果这个元素不重复，则把它存放到结果数组中，同时把这个元素的内容作为对象的一个属性，并赋值为1，存入到第2步建立的对象中。<br><strong>说明：每次从原数组中取出一个元素，然后到对象中去访问这个属性，如果能访问到值，则说明重复。</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">function unique(arr)&#123;</div><div class="line">    var res = [],</div><div class="line">        hashObj = &#123;&#125;;</div><div class="line">        for (var i = 0; i &lt; arr.length; i++) &#123;</div><div class="line">            //注意:在 JavaScript 里，对象的键值只能是字符串，因此需要 var key = typeof(item) + item 来区分数值 1 和字符串 &apos;1&apos; 等情况</div><div class="line">            var item = arr[i],</div><div class="line">                key = typeof(item) + item;</div><div class="line">            if (!hashObj[key]) &#123;</div><div class="line">                res.push(item);</div><div class="line">                hashObj[key] = 1;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="方法四"><a href="#方法四" class="headerlink" title="方法四"></a>方法四</h2><ul>
+<li>先排序再去重，先将原数组排序，与相邻的进行比较，如果不同则存入新数组<br>1.先将原数组进行排序<br>2.检查原数组中的第i个元素与结果数组中的最后一个元素是否相同，因为已经排序，所以重复元素会在相邻位置<br>3.如果不相同，则将该元素存入结果数组中  </li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">function unique(arr)&#123;</div><div class="line">    var sortArr = arr.sort(function(value1,value2)&#123;</div><div class="line">        return value1 - value2;</div><div class="line">    &#125;);</div><div class="line">    var res = [sortArr[0]];</div><div class="line">    for (var i = 1; i &lt; sortArr.length; i++) &#123;</div><div class="line">        if (sortArr[i] !== res[res.length - 1]) &#123;</div><div class="line">                res.push(sortArr[i]);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return res;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">//写法二</div><div class="line">Array.prototype.unique2 = function()&#123;</div><div class="line"> this.sort(); //先排序</div><div class="line"> var res = [this[0]];</div><div class="line"> for(var i = 1; i &lt; this.length; i++)&#123;</div><div class="line">  if(this[i] !== res[res.length - 1])&#123;</div><div class="line">   res.push(this[i]);</div><div class="line">  &#125;</div><div class="line"> &#125;</div><div class="line"> return res;</div><div class="line">&#125;</div><div class="line">var arr = [1, &apos;a&apos;, &apos;a&apos;, &apos;b&apos;, &apos;d&apos;, &apos;e&apos;, &apos;e&apos;, 1, 0]</div><div class="line">alert(arr.unique2());</div></pre></td></tr></table></figure>
+<p><strong>注意：</strong><br>1.原数组的数据类型需要考虑<br>2.该方法存在一定的局限性，因为在去重前进行了排序，所以最后返回的去重结果也是排序后的。如果要求不改变数组的顺序去重，那这种方法便不可取了。</p>
+<h2 id="方法五"><a href="#方法五" class="headerlink" title="方法五"></a>方法五</h2><ul>
+<li>数组递归去重 + splice方法</li>
+<li>运用递归的思想，先排序，然后从最后开始比较，遇到相同，则删除<br><strong>注意：</strong>   </li>
+<li>同样的，这种方法和上面“排序去重”都存在相同缺陷<br>1.原数组的数据类型需要考虑<br>2.该方法存在一定的局限性，因为在去重前进行了排序，所以最后返回的去重结果也是排序后的。如果要求不改变数组的顺序去重，那这种方法便不可取了。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">function unique(arr)&#123;</div><div class="line">             //对数组进行排序才能方便比较</div><div class="line">            var sortArr = arr.sort(function(value1,value2)&#123;</div><div class="line">                return value1 - value2;</div><div class="line">            &#125;);</div><div class="line"></div><div class="line">            function loop(index)&#123;</div><div class="line">                if (index &gt;= 1) &#123;</div><div class="line">                    if (sortArr[index] === sortArr[index - 1]) &#123;</div><div class="line">                        sortArr.splice(index,1);</div><div class="line">                    &#125;</div><div class="line">                    loop(index - 1);//递归loop函数进行去重</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            loop(sortArr.length - 1);</div><div class="line">            return sortArr;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="方法六"><a href="#方法六" class="headerlink" title="方法六"></a>方法六</h2><ul>
+<li>利用ES6的set</li>
+<li>Set数据结构，它类似于数组，其成员的值都是唯一的。</li>
+</ul>
+<p>1.利用Array.from将Set结构转换为数组<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">function unique(arr)&#123;</div><div class="line">    return Array.from(new Set(arr));</div><div class="line">&#125;</div><div class="line">console.log(unique(arr1));</div></pre></td></tr></table></figure></p>
+<p>2.使用拓展运算符(…)，内部使用for…of循环<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let uniqueArr = [...new Set(arr)];</div><div class="line">// 或者</div><div class="line">var arr2 = [1,2,3,2,1,&apos;1&apos;,&apos;2&apos;,&apos;a&apos;,&apos;b&apos;,&apos;aa&apos;,&apos;b&apos;,&apos;c&apos;];</div><div class="line">    console.log([...new Set(arr2)]);</div></pre></td></tr></table></figure></p>
+<h6 id="总结：上述关于数组去重的方法各都存在优缺点，对于性能也有所不同，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我。"><a href="#总结：上述关于数组去重的方法各都存在优缺点，对于性能也有所不同，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我。" class="headerlink" title="总结：上述关于数组去重的方法各都存在优缺点，对于性能也有所不同，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我。"></a>总结：上述关于数组去重的方法各都存在优缺点，对于性能也有所不同，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我。</h6><blockquote>
+<p>参考：<br><a href="https://www.cnblogs.com/rongy/p/6597014.html" target="_blank" rel="external">数组去重的四种方法</a><br><a href="https://segmentfault.com/a/1190000005116655" target="_blank" rel="external">再见，重复的你（数组去重）</a><br><a href="http://sentsin.com/web/63.html" target="_blank" rel="external">玉伯：从js数组去重谈性能优化</a></p>
+</blockquote>
+<hr>
+<p>博主前端小白，才疏学浅，若发现文章有任何不妥的地方，可直接<a href="mailto:jjl1993@foxamail.com" title="jjl1993@foxamail.com" target="_blank" rel="external">E-mail</a>!</p>
+<blockquote>
+<p>“An essential part of creativity is not being afraid to fail.”</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://jjlhi.com/2017/11/15/array-to-heavy/" data-id="cjc0lle5500024kiykw82wkwd" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Array/">Array</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/11/16/get-post/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          关于HTTP协议中GET和POST方法的区别
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/10/24/aboutLol/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">恭喜WE,恭喜RNG</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web/">Web</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/解释说明/">解释说明</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Array/">Array</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS/">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Description/">Description</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GET/">GET</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML/">HTML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/POST/">POST</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/game/">game</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lol/">lol</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sports/">sports</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Array/" style="font-size: 10px;">Array</a> <a href="/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/tags/Description/" style="font-size: 10px;">Description</a> <a href="/tags/GET/" style="font-size: 10px;">GET</a> <a href="/tags/HTML/" style="font-size: 10px;">HTML</a> <a href="/tags/HTTP/" style="font-size: 10px;">HTTP</a> <a href="/tags/JavaScript/" style="font-size: 20px;">JavaScript</a> <a href="/tags/POST/" style="font-size: 10px;">POST</a> <a href="/tags/Web/" style="font-size: 10px;">Web</a> <a href="/tags/game/" style="font-size: 10px;">game</a> <a href="/tags/lol/" style="font-size: 10px;">lol</a> <a href="/tags/sports/" style="font-size: 10px;">sports</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/16/get-post/">关于HTTP协议中GET和POST方法的区别</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/15/array-to-heavy/">关于数组去重的总结</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/24/aboutLol/">恭喜WE,恭喜RNG</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/20/browserRender/">关于浏览器的回流（reflow）和重绘（repaint）</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/20/factorial/">递归</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jiangjl<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
