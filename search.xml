@@ -1,87 +1,538 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
-  <entry>
-    <title><![CDATA[关于HTTP协议中GET和POST方法的区别]]></title>
-    <url>%2F2017%2F11%2F16%2Fget-post%2F</url>
-    <content type="text"><![CDATA[关于HTTP协议中GET和POST方法的区别说在前面的话一直以来，只要提到HTTP协议中GET和POST方法的区别，我就会想到： get是从服务器上获取数据，post是向服务器传送数据。 get是把参数数据队列加到提交表单的ACTION属性所指的URL中，值和表单内各个字段一一对应，在URL中可以看到。post是通过HTTP post机制，将表单内各个字段与其内容放置在HTML HEADER内一起传送到ACTION属性所指的URL地址。用户看不到这个过程。 对于get方式，服务器端用Request.QueryString获取变量的值，对于post方式，服务器端用Request.Form获取提交的数据。 get传送的数据量较小，不能大于2KB。post传送的数据量较大，一般被默认为不受限制。但理论上，IIS4中最大量为80KB，IIS5中为100KB。 get安全性非常低，post安全性较高。但是执行效率却比Post方法好。 …… 又或者是参照于w3schools关于这个问题的解答：HTTP 方法：GET 对比 POST 列出了一般的理解： 请求方法 GET POST 后退按钮/刷新 无害 数据会被重新提交（浏览器应该告知用户数据会被重新提交）。 书签 可收藏为书签 不可收藏为书签 缓存 能被缓存 不能缓存 编码类型 application/x-www-form-urlencoded application/x-www-form-urlencoded 或 multipart/form-data。为二进制数据使用多重编码。 历史 参数保留在浏览器历史中。 参数不会保存在浏览器历史中。 对数据长度的限制 是的。当发送数据时，GET 方法向 URL 添加数据；URL 的长度是受限制的（URL 的最大长度是 2048 个字符）。 无限制。 对数据类型的限制 只允许 ASCII 字符。 没有限制。也允许二进制数据。 安全性 与 POST 相比，GET 的安全性较差，因为所发送的数据是 URL 的一部分。在发送密码或其他敏感信息时绝不要使用 GET ！ POST 比 GET 更安全，因为参数不会被保存在浏览器历史或 web 服务器日志中。 可见性 数据在 URL 中对所有人都是可见的。 数据不会显示在 URL 中。 以上的说法仅给出了一些表面现像上的区别，但并没有解释为什么，因此存在一些不妥之处，至于不妥在何处，请继续看下去… 99%的人都理解错了HTTP中GET与POST的区别 参考：99%的人都理解错了HTTP中GET与POST的区别 有一篇文章《99%的人理解错 HTTP 中 GET 与 POST 的区别》，否定了上述回答：“很遗憾，这不是我们要的回答！”，作者说： GET和POST本质上就是TCP链接，并无差别。但是由于HTTP的规定和浏览器/服务器的限制，导致他们在应用过程中体现出一些不同。 GET和POST还有一个重大区别，简单的说：GET产生一个TCP数据包；POST产生两个TCP数据包。对于GET方式的请求，浏览器会把http header和data一并发送出去，服务器响应200（返回数据）； 而对于POST，浏览器先发送header，服务器响应100 continue，浏览器再发送data，服务器响应200 ok（返回数据）。 都讲到TCP了，感觉很高大上有木有，起码当时看到这篇文章的我是信了的。（博主当时看了这边文章也觉得醍醐灌顶，受益匪浅，直到…） 剧情反转？听说『99% 的人都理解错了 HTTP 中 GET 与 POST 的区别』？？ 参考：听说『99% 的人都理解错了 HTTP 中 GET 与 POST 的区别』？？ 直到又在逛知乎时又看到了这篇文章：听说『99% 的人都理解错了 HTTP 中 GET 与 POST 的区别』？？，指出了前文的两个错误： 100 continue 只有在请求里带了Expect: 100-continueheader 的时候才有意义。When the request contains an Expect header field that includes a 100-continue expectation, the 100 response indicates that the server wishes to receive the request payload body, as described in Section 5.1.1. The client ought to continue sending the request and discard the 100 response. If the request did not contain an Expect header field containing the 100-continue expectation, the client can simply discard this interim response. 我们通常在讨论 GET vs POST 的时候，实际上讨论的是 specification，而不是 implementation。什么是 specification？说白了就是相关的 RFC。implementation 则是所有实现了 specification 中描述的代码/库/产品，比如 curl，Python 的 requests 库，或者 Chrome。POST 请求怎么发送，根本就不是这段 RFC 在讨论的事情。RFC 中只说明了 100 continue 和 Expect header 的联系，比如你想在 GET 请求里带 body，一样可以发送 Expect: 100-continue 并等待 100 continue，这是符合标准的。也就是说，『XHR 发送两个 TCP packets』是关于 implementation 的知识，而不是关于 specification 的知识。你不能说『Chrome 在 AJAX POST 的时候会发两个 TCP packets，GET 只会发一个』是 GET 和 POST 的区别，正如你不能因为北京 PM 2.5 经常爆表就说国家关于工业废气排放的标准有问题。 说得似乎更有道理，而且也搬出了RFC，specification，implementation这些高端词汇，这下子我这个吃瓜群众再也坐不住了，决定亲自去研究一下。 RFC探秘首先，什么是RFC呢？Wiki上面的定义是： 征求意见稿（英语：Request For Comments，缩写为RFC），是由互联网工程任务组（IETF）发布的一系列备忘录。文件收集了有关互联网相关信息，以及UNIX和互联网社区的软件文件，以编号排定。目前RFC文件是由互联网协会（ISOC）赞助发行。 简单理解RFC就是互联网的规范，我们通常所说的「协议」就是以RFC的形式存在，而现行的HTTP/1.1规范的RFC有如下几个： RFC7230， RFC7231， RFC7232， RFC7233， RFC7234， RFC7235。 其中RFC7231里的Section 4. Request Methods涉及到了几个HTTP方法，接下来仔细阅读这一章节。 The request method token is the primary source of request semantics; it indicates the purpose for which the client has made this request and what is expected by the client as a successful result. 这里牵涉到一个很重要的词语：semantic 「语义」，那么什么是语义呢？这一篇文章给出了解释：语法和语义的区别。 一种语言是合法句子的集合。什么样的句子是合法的呢？可以从两方面来判断：语法和语义。语法是和文法结构有关，然而语义是和按照这个结构所组合的单词符号的意义有关。合理的语法结构并不表明语义是合法的。例如我们常说：我上大学，这个句子是符合语法规则的，也符合语义规则。但是大学上我，虽然符合语法规则，但没有什么意义，所以说是不符合语义的。 对于HTTP请求来说，语法是指请求响应的格式，比如请求第一行必须是 方法名 URI 协议/版本 这样的格式，具体内容可以参见之前写的《图解HTTP》读书笔记里面的内容，凡是符合这个格式的请求都是合法的。 语义则定义了这一类型的请求具有什么样的性质。比如GET的语义就是「获取资源」，POST的语义是「处理资源」，那么在具体实现这两个方法时，就必须考虑其语义，做出符合其语义的行为。 当然在符合语法的前提下实现违背语义的行为也是可以做到的，比如使用GET方法修改用户信息，POST获取资源列表，这样就只能说这个请求是「合法」的，但不是「符合语义」的。 写到这里突然联想到XML里面的两个概念：Well Formed和Valid，似乎也正是语法和语义的理念呢。 上文说到方法是请求语义的主要来源，也即是还有次要来源，一些请求Header可以进一步修饰请求的语义，比如一个带上了 Range Header的GET请求就变成了部分请求。 RFC7231里紧接着定义了HTTP方法的几个特性： Safe - 安全这里的「安全」和通常理解的「安全」意义不同，如果一个方法的语义在本质上是「只读」的，那么这个方法就是安全的。客户端向服务端的资源发起的请求如果使用了是安全的方法，就不应该引起服务端任何的状态变化，因此也是无害的。 此RFC定义，GET, HEAD, OPTIONS 和 TRACE 这几个方法是安全的。但是这个定义只是规范，并不能保证方法的实现也是安全的，服务端的实现可能会不符合方法语义，正如上文说过的使用GET修改用户信息的情况。引入安全这个概念的目的是为了方便网络爬虫和缓存，以免调用或者缓存某些不安全方法时引起某些意外的后果。User Agent（浏览器）应该在执行安全和不安全方法时做出区分对待，并给用户以提示。 Idempotent - 幂等幂等的概念是指同一个请求方法执行多次和仅执行一次的效果完全相同。按照RFC规范，PUT，DELETE和安全方法都是幂等的。同样，这也仅仅是规范，服务端实现是否幂等是无法确保的。引入幂等主要是为了处理同一个请求重复发送的情况，比如在请求响应前失去连接，如果方法是幂等的，就可以放心地重发一次请求。这也是浏览器在后退/刷新时遇到POST会给用户提示的原因：POST语义不是幂等的，重复请求可能会带来意想不到的后果。 Cacheable - 可缓存性顾名思义就是一个方法是否可以被缓存，此RFC里GET，HEAD和某些情况下的POST都是可缓存的，但是绝大多数的浏览器的实现里仅仅支持GET和HEAD。关于缓存的更多内容可以去看RFC7234。 在这三个特性里一直在强调同一个事情，那就是协议不等于实现：协议规定安全在实现里不一定安全，协议规定幂等在实现里不一定幂等，协议规定可缓存在实现里不一定可缓存。这其实就是上面那个作者提到的specification和implementation的关系。 语义之争走到这一步，其实就明白了要理解这两个方法的区别，本质上是 「语义」的对比而不是「语法」的对比，是「Specification」的对比而不是「Implementation」的对比。 关于这两种方法的语义，RFC7231里原文已经写得很好了： The GET method requests transfer of a current selected representation for the target resource. GET is the primary mechanism of information retrieval and the focus of almost all performance optimizations. Hence, when people speak of retrieving some identifiable information via HTTP, they are generally referring to making a GET request.A payload within a GET request message has no defined semantics; sending a payload body on a GET request might cause some existing implementations to reject the request. The POST method requests that the target resource process the representation enclosed in the request according to the resource’s own specific semantics. 勉强渣翻一下，再加上点自己的理解： GET的语义是请求获取指定的资源。GET方法是安全、幂等、可缓存的（除非有 Cache-Control Header的约束）,GET方法的报文主体没有任何语义。 POST的语义是根据请求负荷（报文主体）对指定的资源做出处理，具体的处理方式视资源类型而不同。POST不安全，不幂等，（大部分实现）不可缓存。为了针对其不可缓存性，有一系列的方法来进行优化，以后有机会再研究（FLAG已经立起–(^_^)）。 还是举一个通俗栗子吧，在微博这个场景里，GET的语义会被用在「看看我的Timeline上最新的20条微博」这样的场景，而POST的语义会被用在「发微博、评论、点赞」这样的场景中。 总结：本文从通常的理解出发，经过一次质疑和又一次反质疑，一波三折，最终通过阅读RFC规范加深了对于HTTP方法的理解，真是一次令人愉快的探究之旅~我最大的感受就是：不要人云亦云，要坚持独立思考，不要满足于二手知识，要努力追本溯源。 总结：规范是规范，实施是实施。如果非要不按照规范去实施，可能结果能到达目的，但是却不一定是大家所想要的。上述关于HTTP协议中GET和POST方法的区别，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我，侵删！ 原文出处:https://sunshinevvv.coding.me/blog/2017/02/09/HttpGETv.s.POST/ 参考：HTTP协议中GET和POST方法的区别 博主前端小白，才疏学浅，若发现文章有任何不妥的地方，可直接E-mail! “Without new experiences, something inside ofus sleeps. The sleeper must awaken.”]]></content>
-      <categories>
-        <category>Web</category>
-      </categories>
-      <tags>
-        <tag>HTTP</tag>
-        <tag>GET</tag>
-        <tag>POST</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[关于数组去重的总结]]></title>
-    <url>%2F2017%2F11%2F15%2Farray-to-heavy%2F</url>
-    <content type="text"><![CDATA[关于JS数组去重的方法总结方法一： 双层循环，外层循环元素，内层循环时比较值。如果有相同的值则跳过，不相同则push进数组12345678910111213//常规方法function unique(arr)&#123; var res = []; for (var i = 0; i &lt; arr.length; i++) &#123; for (var j = i+1; j &lt; arr.length; j++) &#123; if (arr[i] === arr[j]) &#123; j = ++i; &#125; &#125; res.push(arr[i]); &#125; return res;&#125; 1234567891011121314151617// 类似写法，主要思路和判断方法是一样的，只是细节有点小改动function unique(arr)&#123; var res = [arr[0]]; for (var i = 1; i &lt; arr.length; i++) &#123; var repeat = false; for (var j = 0; j &lt; res.length; j++) &#123; if (arr[i] === res[j]) &#123; repeat = true; break; &#125; &#125; if (!repeat) &#123; res.push(arr[i]); &#125; &#125; return res;&#125; 123456789101112131415161718192021222324//类似思路：主要都是通过双重循环遍历，利用splice直接在原数组进行操作//双层循环，外层循环元素，内层循环时比较值//值相同时，则删去这个值//注意点:删除元素之后，需要将数组的长度也减1.Array.prototype.unique = function ()&#123; var arr = this, i, j, len = arr.length; for(i = 0; i &lt; len; i++)&#123; for(j = i + 1; j &lt; len; j++)&#123; if(arr[i] == arr[j])&#123; arr.splice(j,1); len--; j--; &#125; &#125; &#125; return arr;&#125;;var a = [1,2,3,4,5,6,5,3,2,4,56,4,1,2,1,1,1,1,1,1,];var b = a.unique();console.log(b.toString()); //1,2,3,4,5,6,56 方法二 利用indexOf()方法，下标索引查询，需要考虑indexOf该方法的兼容性1234567891011121314151617181920212223var indexOf = [].indexOf ? function indexOf(arr,item)&#123; return arr.indexOf(item); &#125; : function indexOf(arr,item)&#123; for (var i = 0; i &lt; arr.length; i++) &#123;//这里遍历方法可以选择forEach，map，filter方法也可以实现，看你喜欢. if (arr[i] === item) &#123; return i; &#125; &#125; return -1; &#125;function unique(arr)&#123; var res = []; for (var i = 0; i &lt; arr.length; i++) &#123; if (res.indexOf(arr[i]) === -1) &#123; res.push(arr[i]); &#125; &#125; return res;&#125; 方法三（推荐） 利用对象的属性不能相同的特点进行去重，考虑性能和优化 创建一个新的数组存放结果 创建一个空对象 for循环时，每次取出一个元素与对象进行对比，如果这个元素不重复，则把它存放到结果数组中，同时把这个元素的内容作为对象的一个属性，并赋值为1，存入到第2步建立的对象中。说明：每次从原数组中取出一个元素，然后到对象中去访问这个属性，如果能访问到值，则说明重复。1234567891011121314function unique(arr)&#123; var res = [], hashObj = &#123;&#125;; for (var i = 0; i &lt; arr.length; i++) &#123; //注意:在 JavaScript 里，对象的键值只能是字符串，因此需要 var key = typeof(item) + item 来区分数值 1 和字符串 &apos;1&apos; 等情况 var item = arr[i], key = typeof(item) + item; if (!hashObj[key]) &#123; res.push(item); hashObj[key] = 1; &#125; &#125; return res;&#125; 方法四 先排序再去重，先将原数组排序，与相邻的进行比较，如果不同则存入新数组1.先将原数组进行排序2.检查原数组中的第i个元素与结果数组中的最后一个元素是否相同，因为已经排序，所以重复元素会在相邻位置3.如果不相同，则将该元素存入结果数组中 123456789101112function unique(arr)&#123; var sortArr = arr.sort(function(value1,value2)&#123; return value1 - value2; &#125;); var res = [sortArr[0]]; for (var i = 1; i &lt; sortArr.length; i++) &#123; if (sortArr[i] !== res[res.length - 1]) &#123; res.push(sortArr[i]); &#125; &#125; return res;&#125; 12345678910111213//写法二Array.prototype.unique2 = function()&#123; this.sort(); //先排序 var res = [this[0]]; for(var i = 1; i &lt; this.length; i++)&#123; if(this[i] !== res[res.length - 1])&#123; res.push(this[i]); &#125; &#125; return res;&#125;var arr = [1, &apos;a&apos;, &apos;a&apos;, &apos;b&apos;, &apos;d&apos;, &apos;e&apos;, &apos;e&apos;, 1, 0]alert(arr.unique2()); 注意：1.原数组的数据类型需要考虑2.该方法存在一定的局限性，因为在去重前进行了排序，所以最后返回的去重结果也是排序后的。如果要求不改变数组的顺序去重，那这种方法便不可取了。 方法五 数组递归去重 + splice方法 运用递归的思想，先排序，然后从最后开始比较，遇到相同，则删除注意： 同样的，这种方法和上面“排序去重”都存在相同缺陷1.原数组的数据类型需要考虑2.该方法存在一定的局限性，因为在去重前进行了排序，所以最后返回的去重结果也是排序后的。如果要求不改变数组的顺序去重，那这种方法便不可取了。123456789101112131415161718function unique(arr)&#123; //对数组进行排序才能方便比较 var sortArr = arr.sort(function(value1,value2)&#123; return value1 - value2; &#125;); function loop(index)&#123; if (index &gt;= 1) &#123; if (sortArr[index] === sortArr[index - 1]) &#123; sortArr.splice(index,1); &#125; loop(index - 1);//递归loop函数进行去重 &#125; &#125; loop(sortArr.length - 1); return sortArr; &#125; 方法六 利用ES6的set Set数据结构，它类似于数组，其成员的值都是唯一的。 1.利用Array.from将Set结构转换为数组1234function unique(arr)&#123; return Array.from(new Set(arr));&#125;console.log(unique(arr1)); 2.使用拓展运算符(…)，内部使用for…of循环1234let uniqueArr = [...new Set(arr)];// 或者var arr2 = [1,2,3,2,1,&apos;1&apos;,&apos;2&apos;,&apos;a&apos;,&apos;b&apos;,&apos;aa&apos;,&apos;b&apos;,&apos;c&apos;]; console.log([...new Set(arr2)]); 总结：上述关于数组去重的方法各都存在优缺点，对于性能也有所不同，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我。 参考：数组去重的四种方法再见，重复的你（数组去重）玉伯：从js数组去重谈性能优化 博主前端小白，才疏学浅，若发现文章有任何不妥的地方，可直接E-mail! “An essential part of creativity is not being afraid to fail.”]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
-        <tag>Array</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[恭喜WE,恭喜RNG]]></title>
-    <url>%2F2017%2F10%2F24%2FaboutLol%2F</url>
-    <content type="text"><![CDATA[很久没来说说话了，原因了，如下： 一是因为懒懒懒； 二是作者水平在那里，没得啥子有水平的言语和高深的技巧术语给你们； 三则是因为最近忙着追剧（LOL-S7）； 在这里，还是先要恭喜WE！恭喜RNG! 希望可以进一步取得更好的成绩吧！……… 也希望作者可以好好修炼哈自己，写点有营养的东西出来！ “When you’re curious, you find lots of interesting things to do.” 给LPL加油打气哈！！！ （以下图借用于其他平台，侵删！！！） 早点睡觉吧。]]></content>
-      <categories>
-        <category>杂谈</category>
-      </categories>
-      <tags>
-        <tag>lol</tag>
-        <tag>game</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[关于浏览器的回流（reflow）和重绘（repaint）]]></title>
-    <url>%2F2017%2F09%2F20%2FbrowserRender%2F</url>
-    <content type="text"><![CDATA[关于浏览器的回流(reflow）和重绘（repaint） 博文出自于：https://coolshell.cn/articles/9666.html 参考神文：《How Browsers Work》 浏览器的渲染原理简介 在谈到浏览器的回流和重绘的时候，就不得不说到浏览器的渲染原理 浏览器工作大流程 废话少说，先来看个图： 从上面这个图中，我们可以看到那么几个事： 1). 浏览器会解析三个东西： 一个是HTML/SVG/XHTML，事实上，Webkit有三个C++的类对应这三类文档。解析这三种文件会产生一个DOM Tree。 CSS，解析CSS会产生CSS规则树。 Javascript，脚本，主要是通过DOM API和CSSOM API来操作DOM Tree和CSS Rule Tree. 2). 解析完成后，浏览器引擎会通过DOM Tree 和 CSS Rule Tree 来构造 Rendering Tree。注意： Rendering Tree 渲染树并不等同于DOM树，因为一些像Header或display:none的东西就没必要放在渲染树中了。 CSS 的 Rule Tree主要是为了完成匹配并把CSS Rule附加上Rendering Tree上的每个Element。也就是DOM结点。也就是所谓的Frame。 然后，计算每个Frame（也就是每个Element）的位置，这又叫layout和reflow过程。 3）最后通过调用操作系统Native GUI的API绘制。 DOM解析HTML的DOM Tree解析如下：123456789101112&lt;html&gt;&lt;html&gt;&lt;head&gt; &lt;title&gt;Web page parsing&lt;/title&gt;&lt;/head&gt;&lt;body&gt; &lt;div&gt; &lt;h1&gt;Web page parsing&lt;/h1&gt; &lt;p&gt;This is an example Web page.&lt;/p&gt; &lt;/div&gt;&lt;/body&gt;&lt;/html&gt; 上面这段HTML会解析成这样： 下面是另一个有SVG标签的情况。 CSS解析CSS的解析大概是下面这个样子（下面主要说的是Gecko也就是Firefox的玩法），假设我们有下面的HTML文档：123456789&lt;doc&gt;&lt;title&gt;A few quotes&lt;/title&gt;&lt;para&gt; Franklin said that &lt;quote&gt;&quot;A penny saved is a penny earned.&quot;&lt;/quote&gt;&lt;/para&gt;&lt;para&gt; FDR said &lt;quote&gt;&quot;We have nothing to fear but &lt;span&gt;fear itself.&lt;/span&gt;&quot;&lt;/quote&gt;&lt;/para&gt;&lt;/doc&gt; 于是DOM Tree是这个样子： 然后我们的CSS文档是这样的：1234/* rule 1 */ doc &#123; display: block; text-indent: 1em; &#125;/* rule 2 */ title &#123; display: block; font-size: 3em; &#125;/* rule 3 */ para &#123; display: block; &#125;/* rule 4 */ [class=&quot;emph&quot;] &#123; font-style: italic; &#125; 于是我们的CSS Rule Tree会是这个样子： 注意，图中的第4条规则出现了两次，一次是独立的，一次是在规则3的子结点。所以，我们可以知道，建立CSS Rule Tree是需要比照着DOM Tree来的。CSS匹配DOM Tree主要是从右到左解析CSS的Selector，好多人以为这个事会比较快，其实并不一定。关键还看我们的CSS的Selector怎么写了。 注意：CSS匹配HTML元素是一个相当复杂和有性能问题的事情。所以，你就会在N多地方看到很多人都告诉你，DOM树要小，CSS尽量用id和class，千万不要过渡层叠下去，…… 通过这两个树，我们可以得到一个叫Style Context Tree，也就是下面这样（把CSS Rule结点Attach到DOM Tree上）： 所以，Firefox基本上来说是通过CSS 解析 生成 CSS Rule Tree，然后，通过比对DOM生成Style Context Tree，然后Firefox通过把Style Context Tree和其Render Tree（Frame Tree）关联上，就完成了。注意：Render Tree会把一些不可见的结点去除掉。而Firefox中所谓的Frame就是一个DOM结点，不要被其名字所迷惑了。 注：Webkit不像Firefox要用两个树来干这个，Webkit也有Style对象，它直接把这个Style对象存在了相应的DOM结点上了。 渲染渲染的流程基本上如下（黄色的四个步骤）： 计算CSS样式 构建Render Tree Layout – 定位坐标和大小，是否换行，各种position, overflow, z-index属性 …… 正式开画 注意：上图流程中有很多连接线，这表示了Javascript动态修改了DOM属性或是CSS属会导致重新Layout，有些改变不会，就是那些指到天上的箭头，比如，修改后的CSS rule没有被匹配到，等。 这里重要要说两个概念，一个是Reflow，另一个是Repaint。这两个不是一回事。 Repaint——屏幕的一部分要重画，比如某个CSS的背景色变了。但是元素的几何尺寸没有变。 Reflow——意味着元件的几何尺寸变了，我们需要重新验证并计算Render Tree。是Render Tree的一部分或全部发生了变化。这就是Reflow，或是Layout。（HTML使用的是flow based layout，也就是流式布局，所以，如果某元件的几何尺寸发生了变化，需要重新布局，也就叫reflow）reflow 会从这个root frame开始递归往下，依次计算所有的结点几何尺寸和位置，在reflow过程中，可能会增加一些frame，比如一个文本字符串必需被包装起来。 Reflow的成本比Repaint的成本高得多的多。DOM Tree里的每个结点都会有reflow方法，一个结点的reflow很有可能导致子结点，甚至父点以及同级结点的reflow。在一些高性能的电脑上也许还没什么，但是如果reflow发生在手机上，那么这个过程是非常痛苦和耗电的。 所以，下面这些动作有很大可能会是成本比较高的。 当你增加、删除、修改DOM结点时，会导致Reflow或Repaint 当你移动DOM的位置，或是搞个动画的时候。 当你修改CSS样式的时候。 当你Resize窗口的时候（移动端没有这个问题），或是滚动的时候。 当你修改网页的默认字体时。 注：display:none会触发reflow，而visibility:hidden只会触发repaint，因为没有发现位置变化。 多说两句关于滚屏的事，通常来说，如果在滚屏的时候，我们的页面上的所有的像素都会跟着滚动，那么性能上没什么问题，因为我们的显卡对于这种把全屏像素往上往下移的算法是很快。但是如果你有一个fixed的背景图，或是有些Element不跟着滚动，有些Elment是动画，那么这个滚动的动作对于浏览器来说会是相当相当痛苦的一个过程。你可以看到很多这样的网页在滚动的时候性能有多差。因为滚屏也有可能会造成reflow。 基本上来说，reflow有如下的几个原因： Initial。网页初始化的时候。 Incremental。一些Javascript在操作DOM Tree时。 Resize。其些元件的尺寸变了。 StyleChange。如果CSS的属性发生变化了。 Dirty。几个Incremental的reflow发生在同一个frame的子树上。 好了，我们来看一个示例吧：123456789101112var bstyle = document.body.style; // cache bstyle.padding = &quot;20px&quot;; // reflow, repaintbstyle.border = &quot;10px solid red&quot;; // 再一次的 reflow 和 repaint bstyle.color = &quot;blue&quot;; // repaintbstyle.backgroundColor = &quot;#fad&quot;; // repaint bstyle.fontSize = &quot;2em&quot;; // reflow, repaint // new DOM element - reflow, repaintdocument.body.appendChild(document.createTextNode(&apos;dude!&apos;)); 当然，我们的浏览器是聪明的，它不会像上面那样，你每改一次样式，它就reflow或repaint一次。一般来说，浏览器会把这样的操作积攒一批，然后做一次reflow，这又叫异步reflow或增量异步reflow。但是有些情况浏览器是不会这么做的，比如：resize窗口，改变了页面默认的字体，等。对于这些操作，浏览器会马上进行reflow。 但是有些时候，我们的脚本会阻止浏览器这么干，比如：如果我们请求下面的一些DOM值： offsetTop, offsetLeft, offsetWidth, offsetHeight scrollTop/Left/Width/Height clientTop/Left/Width/Height IE中的 getComputedStyle(), 或 currentStyle 因为，如果我们的程序需要这些值，那么浏览器需要返回最新的值，而这样一样会flush出去一些样式的改变，从而造成频繁的reflow/repaint。 减少reflow/repaint下面是一些Best Practices： 1).不要一条一条地修改DOM的样式。与其这样，还不如预先定义好css的class，然后修改DOM的className。1234567891011// badvar left = 10,top = 10;el.style.left = left + &quot;px&quot;;el.style.top = top + &quot;px&quot;; // Goodel.className += &quot; theclassname&quot;; // Goodel.style.cssText += &quot;; left: &quot; + left + &quot;px; top: &quot; + top + &quot;px;&quot;; 2).把DOM离线后修改。如： 使用documentFragment 对象在内存里操作DOM 先把DOM给display:none(有一次reflow)，然后你想怎么改就怎么改。比如修改100次，然后再把他显示出来。 clone一个DOM结点到内存里，然后想怎么改就怎么改，改完后，和在线的那个的交换一下。 3).不要把DOM结点的属性值放在一个循环里当成循环里的变量。不然这会导致大量地读写这个结点的属性。4).尽可能的修改层级比较低的DOM。当然，改变层级比较底的DOM有可能会造成大面积的reflow，但是也可能影响范围很小。5).为动画的HTML元件使用fixed或absoult的position，那么修改他们的CSS是不会reflow的。6).千万不要使用table布局。因为可能很小的一个小改动会造成整个table的重新布局。 In this manner, the user agent can begin to lay out the table once the entire first row has been received. Cells in subsequent rows do not affect column widths. Any cell that has content that overflows uses the ‘overflow’ property to determine whether to clip the overflow content. Fixed layout, CSS 2.1 Specification This algorithm may be inefficient since it requires the user agent to have access to all the content in the table before determining the final layout and may demand more than one pass. Automatic layout, CSS 2.1 Specification 几个工具和几篇文章有时候，你会也许会发现在IE下，你不知道你修改了什么东西，结果CPU一下子就上去了到100%，然后过了好几秒钟repaint/reflow才完成，这种事情以IE的年代时经常发生。所以，我们需要一些工具帮我们看看我们的代码里有没有什么不合适的东西。 Chrome下，Google的SpeedTracer是个非常强悍的工作让你看看你的浏览渲染的成本有多大。其实Safari和Chrome都可以使用开发者工具里的一个Timeline的东东。 Firefox下这个基于Firebug的叫Firebug Paint Events的插件也不错。 IE下你可以用一个叫dynaTrace的IE扩展。 最后，别忘了下面这几篇提高浏览器性能的文章： Google – Web Performance Best Practices Yahoo – Best Practices for Speeding Up Your Web Site Steve Souders – 14 Rules for Faster-Loading Web Sites 总结：上述关于浏览器渲染原理的简介以及关于浏览器的回流和重绘细节之处需要慢慢去体会。引用此文章仅作为博主学习总结，如发现有任何侵权行为，请立马联系我。 参考：浏览器的渲染原理简介 博主前端小白，才疏学浅，若发现文章有任何不妥的地方，可直接E-mail! “An essential part of creativity is not being afraid to fail.”]]></content>
-      <categories>
-        <category>Web</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
-        <tag>Web</tag>
-        <tag>HTML</tag>
-        <tag>CSS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[递归]]></title>
-    <url>%2F2017%2F09%2F20%2Ffactorial%2F</url>
-    <content type="text"><![CDATA[递归浅谈js里面的递归！ 递归函数是在一个函数通过名字调用自身的情况下构成的，示例如下。 12345678function factorial(num)&#123; if(num &lt;= 1)&#123; return 1; &#125;else&#123; return num * factorial(num-1); &#125;&#125;factorial(5); //120 上面的示例是一个经典递归阶乘函数。虽然这个函数表面看起来没什么问题，但是接下来你再看看，看仔细哟。 123var anotherFactorial = factorial; factorial = null; console.log(anotherFactorial(4));//报错！！！ 出错了？是的。 上述代码先把factorial()函数保存在变量anotherfactorial中，然后将factorial变量设置为null，结果指向原始函数的引用只剩下一个。但在接下来调用anotherfactorial()时，由于必须执行factorial(),而factorial已经不再是函数，所以就会导致错误。在这种情况下，怎么解决这个问题呢？使用arguments.callee可以解决这个问题。 我们知道，arguments.callee是一个指向正在执行的函数的指针，因此可以用它来实现对函数的递归调用，例如： 1234567function factorial(num)&#123; if(num &lt;= 1)&#123; return 1; &#125;else&#123; return num * arguments.callee(num-1);//手动加粗 &#125;&#125; 上面手动加粗的代码显示：通过使用arguments.callee代替函数名，可以确保无论怎样调用函数都不会出问题。因此，在编写递归函数时，使用arguments.callee总比使用函数名更保险。 但在严格模式下，不能通过脚本访问arguments.callee，访问这个属性会导致错误。不过，可以使用命名函数表达式来达成相同的效果。例如： 1234567var factorial = (function f(num)&#123; if(num &lt;= 1)&#123; return 1; &#125;else&#123; return num*f(num-1); &#125; &#125;); 通过以上的代码创建了名为f()的命名函数表达式，然后将它赋值给变量factorial。即便把函数复制给了另一个变量，函数的名字f仍然有效，所以递归调用照样能正确的完成。 这种方式在严格模式和非严格模式下都行得通。 总结： 递归： 函数体中调用函数自身–函数自己和自己玩。 “Don’t let yesterday take up too much of today.” 福利 看看别个怎么说的：一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。 不说了，该睡觉了。]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[Attention]]></title>
-    <url>%2F2017%2F09%2F06%2FtestFile%2F</url>
-    <content type="text"><![CDATA[本站作者还在探索建设中… 有好东西给你们 常来逛逛 逛到深处会有福利的 ——————–横线————————— 福利 看看别个怎么说的：一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。 不说了，该睡觉了。]]></content>
-      <categories>
-        <category>解释说明</category>
-      </categories>
-      <tags>
-        <tag>Description</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[深夜，恭喜国足]]></title>
-    <url>%2F2017%2F08%2F30%2Fsecond%2F</url>
-    <content type="text"><![CDATA[恭喜中国足球在俄罗斯世界预选赛赢得一场胜利希望国足可以走得更远– 国足 牛逼！– 又是一个伤心的夜晚– 今天看到了希望– 换来的是绝望– 不是队员不努力– 不是某个队员的失误– 而是从古至今国足经历了多少次黑色三分钟– 我们的球员什么时候才能分析场上形势– 根据形势踢该踢的球– 该往角球带就往角球带– 不行卧草也能拖延时间– 这是整个中国足球教育体系的问题– 一次又一次的伤球迷的心– 虽然下场比赛还是会继续为你们加油– 但国足争气点– 把属于足球的快乐还给中国球迷– 我知道你们也很难受– 但难受有用吗 我们更看重结果– 但就这样的球队进了世界杯又能怎样呢– 晚安吧 明天又是新的一天]]></content>
-      <categories>
-        <category>杂谈</category>
-      </categories>
-      <tags>
-        <tag>sports</tag>
-      </tags>
-  </entry>
+<search> 
+  
+    
+    <entry>
+      <title><![CDATA[关于HTTP协议中GET和POST方法的区别]]></title>
+      <url>/2017/11/16/get-post/</url>
+      <content type="html"><![CDATA[<h1 id="关于HTTP协议中GET和POST方法的区别"><a href="#关于HTTP协议中GET和POST方法的区别" class="headerlink" title="关于HTTP协议中GET和POST方法的区别"></a>关于HTTP协议中GET和POST方法的区别</h1><h2 id="说在前面的话"><a href="#说在前面的话" class="headerlink" title="说在前面的话"></a>说在前面的话</h2><p>一直以来，只要提到HTTP协议中GET和POST方法的区别，我就会想到：</p>
+<ol>
+<li>get是从服务器上获取数据，post是向服务器传送数据。</li>
+<li>get是把参数数据队列加到提交表单的ACTION属性所指的URL中，值和表单内各个字段一一对应，在URL中可以看到。post是通过HTTP post机制，将表单内各个字段与其内容放置在HTML HEADER内一起传送到ACTION属性所指的URL地址。用户看不到这个过程。</li>
+<li>对于get方式，服务器端用Request.QueryString获取变量的值，对于post方式，服务器端用Request.Form获取提交的数据。</li>
+<li>get传送的数据量较小，不能大于2KB。post传送的数据量较大，一般被默认为不受限制。但理论上，IIS4中最大量为80KB，IIS5中为100KB。</li>
+<li>get安全性非常低，post安全性较高。但是执行效率却比Post方法好。 </li>
+<li>……  </li>
+</ol>
+<p>又或者是参照于w3schools关于这个问题的解答：<a href="http://www.w3school.com.cn/tags/html_ref_httpmethods.asp" target="_blank" rel="external">HTTP 方法：GET 对比 POST</a> 列出了一般的理解：</p>
+<table>
+<thead>
+<tr>
+<th>请求方法</th>
+<th>GET</th>
+<th>POST</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>后退按钮/刷新</td>
+<td>无害</td>
+<td>数据会被重新提交（浏览器应该告知用户数据会被重新提交）。</td>
+</tr>
+<tr>
+<td>书签</td>
+<td>可收藏为书签</td>
+<td>不可收藏为书签</td>
+</tr>
+<tr>
+<td>缓存</td>
+<td>能被缓存</td>
+<td>不能缓存</td>
+</tr>
+<tr>
+<td>编码类型</td>
+<td>application/x-www-form-urlencoded</td>
+<td>application/x-www-form-urlencoded 或 multipart/form-data。为二进制数据使用多重编码。</td>
+</tr>
+<tr>
+<td>历史</td>
+<td>参数保留在浏览器历史中。</td>
+<td>参数不会保存在浏览器历史中。</td>
+</tr>
+<tr>
+<td>对数据长度的限制</td>
+<td>是的。当发送数据时，GET 方法向 URL 添加数据；URL 的长度是受限制的（URL 的最大长度是 2048 个字符）。</td>
+<td>无限制。</td>
+</tr>
+<tr>
+<td>对数据类型的限制</td>
+<td>只允许 ASCII 字符。</td>
+<td>没有限制。也允许二进制数据。</td>
+</tr>
+<tr>
+<td>安全性</td>
+<td>与 POST 相比，GET 的安全性较差，因为所发送的数据是 URL 的一部分。在发送密码或其他敏感信息时绝不要使用 GET ！</td>
+<td>POST 比 GET 更安全，因为参数不会被保存在浏览器历史或 web 服务器日志中。</td>
+</tr>
+<tr>
+<td>可见性</td>
+<td>数据在 URL 中对所有人都是可见的。</td>
+<td>数据不会显示在 URL 中。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>以上的说法仅给出了一些表面现像上的区别，但并没有解释为什么，因此存在一些不妥之处，至于不妥在何处，请继续看下去…</strong></p>
+<a id="more"></a>
+<h2 id="99-的人都理解错了HTTP中GET与POST的区别"><a href="#99-的人都理解错了HTTP中GET与POST的区别" class="headerlink" title="99%的人都理解错了HTTP中GET与POST的区别"></a>99%的人都理解错了HTTP中GET与POST的区别</h2><blockquote>
+<p>参考：<a href="http://mp.weixin.qq.com/s?__biz=MzI3NzIzMzg3Mw==&amp;mid=100000054&amp;idx=1&amp;sn=71f6c214f3833d9ca20b9f7dcd9d33e4#rd" target="_blank" rel="external">99%的人都理解错了HTTP中GET与POST的区别</a></p>
+</blockquote>
+<p>有一篇文章《<a href="http://mp.weixin.qq.com/s?__biz=MzI3NzIzMzg3Mw==&amp;mid=100000054&amp;idx=1&amp;sn=71f6c214f3833d9ca20b9f7dcd9d33e4#rd" target="_blank" rel="external">99%的人理解错 HTTP 中 GET 与 POST 的区别</a>》，否定了上述回答：“很遗憾，这不是我们要的回答！”，作者说：</p>
+<blockquote>
+<p>GET和POST本质上就是TCP链接，并无差别。但是由于HTTP的规定和浏览器/服务器的限制，导致他们在应用过程中体现出一些不同。 GET和POST还有一个重大区别，简单的说：GET产生一个TCP数据包；POST产生两个TCP数据包。<br>对于GET方式的请求，浏览器会把http header和data一并发送出去，服务器响应200（返回数据）； 而对于POST，浏览器先发送header，服务器响应100 continue，浏览器再发送data，服务器响应200 ok（返回数据）。</p>
+</blockquote>
+<p>都讲到TCP了，感觉很高大上有木有，起码当时看到这篇文章的我是信了的。<br>（博主当时看了这边文章也觉得醍醐灌顶，受益匪浅，直到…）</p>
+<h2 id="剧情反转？"><a href="#剧情反转？" class="headerlink" title="剧情反转？"></a>剧情反转？</h2><h3 id="听说『99-的人都理解错了-HTTP-中-GET-与-POST-的区别』？？"><a href="#听说『99-的人都理解错了-HTTP-中-GET-与-POST-的区别』？？" class="headerlink" title="听说『99% 的人都理解错了 HTTP 中 GET 与 POST 的区别』？？"></a>听说『99% 的人都理解错了 HTTP 中 GET 与 POST 的区别』？？</h3><blockquote>
+<p>参考：<a href="https://zhuanlan.zhihu.com/p/25028045" target="_blank" rel="external">听说『99% 的人都理解错了 HTTP 中 GET 与 POST 的区别』？？</a></p>
+</blockquote>
+<p>直到又在逛知乎时又看到了这篇文章：<a href="https://zhuanlan.zhihu.com/p/25028045" target="_blank" rel="external">听说『99% 的人都理解错了 HTTP 中 GET 与 POST 的区别』？？</a>，指出了前文的两个错误：</p>
+<blockquote>
+<p>100 continue 只有在请求里带了Expect: 100-continueheader 的时候才有意义。<br>When the request contains an Expect header field that includes a 100-continue expectation, the 100 response indicates that the server wishes to receive the request payload body, as described in Section 5.1.1. The client ought to continue sending the request and discard the 100 response. If the request did not contain an Expect header field containing the 100-continue expectation, the client can simply discard this interim response.</p>
+<p>我们通常在讨论 GET vs POST 的时候，实际上讨论的是 specification，而不是 implementation。什么是 specification？说白了就是相关的 RFC。implementation 则是所有实现了 specification 中描述的代码/库/产品，比如 curl，Python 的 requests 库，或者 Chrome。<br>POST 请求怎么发送，根本就不是这段 RFC 在讨论的事情。RFC 中只说明了 100 continue 和 Expect header 的联系，比如你想在 GET 请求里带 body，一样可以发送 Expect: 100-continue 并等待 100 continue，这是符合标准的。<br>也就是说，『XHR 发送两个 TCP packets』是关于 implementation 的知识，而不是关于 specification 的知识。你不能说『Chrome 在 AJAX POST 的时候会发两个 TCP packets，GET 只会发一个』是 GET 和 POST 的区别，正如你不能因为北京 PM 2.5 经常爆表就说国家关于工业废气排放的标准有问题。</p>
+</blockquote>
+<p>说得似乎更有道理，而且也搬出了RFC，specification，implementation这些高端词汇，这下子我这个吃瓜群众再也坐不住了，决定亲自去研究一下。</p>
+<h2 id="RFC探秘"><a href="#RFC探秘" class="headerlink" title="RFC探秘"></a>RFC探秘</h2><p>首先，什么是RFC呢？Wiki上面的定义是：</p>
+<blockquote>
+<p>征求意见稿（英语：Request For Comments，缩写为RFC），是由互联网工程任务组（IETF）发布的一系列备忘录。文件收集了有关互联网相关信息，以及UNIX和互联网社区的软件文件，以编号排定。目前RFC文件是由互联网协会（ISOC）赞助发行。</p>
+</blockquote>
+<p>简单理解RFC就是互联网的规范，我们通常所说的「协议」就是以RFC的形式存在，而现行的HTTP/1.1规范的RFC有如下几个： <a href="https://tools.ietf.org/html/rfc7230" target="_blank" rel="external">RFC7230</a>， <a href="https://tools.ietf.org/html/rfc7231" target="_blank" rel="external">RFC7231</a>， <a href="https://tools.ietf.org/html/rfc7232" target="_blank" rel="external">RFC7232</a>， <a href="https://tools.ietf.org/html/rfc7233" target="_blank" rel="external">RFC7233</a>， <a href="https://tools.ietf.org/html/rfc7234" target="_blank" rel="external">RFC7234</a>， <a href="https://tools.ietf.org/html/rfc7235" target="_blank" rel="external">RFC7235</a>。 其中RFC7231里的Section 4. Request Methods涉及到了几个HTTP方法，接下来仔细阅读这一章节。</p>
+<blockquote>
+<p>The request method token is the primary source of request semantics; it indicates the purpose for which the client has made this request and what is expected by the client as a successful result.</p>
+</blockquote>
+<p>这里牵涉到一个很重要的词语：<strong>semantic</strong> 「语义」，那么什么是语义呢？这一篇文章给出了解释：<a href="http://blog.darkmi.com/2013/04/10/3018.html" target="_blank" rel="external">语法和语义的区别</a>。 </p>
+<blockquote>
+<p>一种语言是合法句子的集合。什么样的句子是合法的呢？可以从两方面来判断：语法和语义。语法是和文法结构有关，然而语义是和按照这个结构所组合的单词符号的意义有关。合理的语法结构并不表明语义是合法的。例如我们常说：我上大学，这个句子是符合语法规则的，也符合语义规则。但是大学上我，虽然符合语法规则，但没有什么意义，所以说是不符合语义的。</p>
+</blockquote>
+<ul>
+<li><p>对于HTTP请求来说，语法是指请求响应的格式，比如请求第一行必须是 方法名 URI 协议/版本 这样的格式，具体内容可以参见之前写的《图解HTTP》读书笔记里面的内容，凡是符合这个格式的请求都是合法的。</p>
+</li>
+<li><p>语义则定义了这一类型的请求具有什么样的性质。比如GET的语义就是「获取资源」，POST的语义是「处理资源」，那么在具体实现这两个方法时，就必须考虑其语义，做出符合其语义的行为。</p>
+</li>
+<li><p>当然在符合语法的前提下实现违背语义的行为也是可以做到的，比如使用GET方法修改用户信息，POST获取资源列表，这样就只能说这个请求是「合法」的，但不是「符合语义」的。 写到这里突然联想到XML里面的两个概念：Well Formed和Valid，似乎也正是语法和语义的理念呢。</p>
+</li>
+</ul>
+<p>上文说到方法是请求语义的主要来源，也即是还有次要来源，一些请求Header可以进一步修饰请求的语义，比如一个带上了 Range Header的GET请求就变成了部分请求。</p>
+<p>RFC7231里紧接着定义了HTTP方法的几个特性：</p>
+<ol>
+<li>Safe - 安全<br>这里的「安全」和通常理解的「安全」意义不同，如果一个方法的语义在本质上是「只读」的，那么这个方法就是安全的。客户端向服务端的资源发起的请求如果使用了是安全的方法，就不应该引起服务端任何的状态变化，因此也是无害的。 此RFC定义，GET, HEAD, OPTIONS 和 TRACE 这几个方法是安全的。<br>但是这个定义只是规范，并不能保证方法的实现也是安全的，服务端的实现可能会不符合方法语义，正如上文说过的使用GET修改用户信息的情况。<br>引入安全这个概念的目的是为了方便网络爬虫和缓存，以免调用或者缓存某些不安全方法时引起某些意外的后果。User Agent（浏览器）应该在执行安全和不安全方法时做出区分对待，并给用户以提示。</li>
+<li>Idempotent - 幂等<br>幂等的概念是指同一个请求方法执行多次和仅执行一次的效果完全相同。按照RFC规范，PUT，DELETE和安全方法都是幂等的。同样，这也仅仅是规范，服务端实现是否幂等是无法确保的。<br>引入幂等主要是为了处理同一个请求重复发送的情况，比如在请求响应前失去连接，如果方法是幂等的，就可以放心地重发一次请求。这也是浏览器在后退/刷新时遇到POST会给用户提示的原因：POST语义不是幂等的，重复请求可能会带来意想不到的后果。</li>
+<li>Cacheable - 可缓存性<br>顾名思义就是一个方法是否可以被缓存，此RFC里GET，HEAD和某些情况下的POST都是可缓存的，但是绝大多数的浏览器的实现里仅仅支持GET和HEAD。关于缓存的更多内容可以去看RFC7234。</li>
+</ol>
+<p>在这三个特性里一直在强调同一个事情，那就是协议不等于实现：协议规定安全在实现里不一定安全，协议规定幂等在实现里不一定幂等，协议规定可缓存在实现里不一定可缓存。这其实就是上面那个作者提到的specification和implementation的关系。</p>
+<h2 id="语义之争"><a href="#语义之争" class="headerlink" title="语义之争"></a>语义之争</h2><p>走到这一步，其实就明白了要理解这两个方法的区别，<strong>本质上是 「语义」的对比而不是「语法」的对比，是「Specification」的对比而不是「Implementation」的对比。</strong></p>
+<p>关于这两种方法的语义，RFC7231里原文已经写得很好了：</p>
+<blockquote>
+<p>The GET method requests transfer of a current selected representation for the target resource. GET is the primary mechanism of information retrieval and the focus of almost all performance optimizations. Hence, when people speak of retrieving some identifiable information via HTTP, they are generally referring to making a GET request.<br>A payload within a GET request message has no defined semantics; sending a payload body on a GET request might cause some existing implementations to reject the request.</p>
+<p>The POST method requests that the target resource process the representation enclosed in the request according to the resource’s own specific semantics.</p>
+</blockquote>
+<p>勉强渣翻一下，再加上点自己的理解：</p>
+<ul>
+<li><p>GET的语义是请求获取指定的资源。GET方法是安全、幂等、可缓存的（除非有 Cache-Control Header的约束）,GET方法的报文主体没有任何语义。</p>
+</li>
+<li><p>POST的语义是根据请求负荷（报文主体）对指定的资源做出处理，具体的处理方式视资源类型而不同。POST不安全，不幂等，（大部分实现）不可缓存。为了针对其不可缓存性，有一系列的方法来进行优化，以后有机会再研究（FLAG已经立起–(<em>^_^</em>)）。</p>
+</li>
+<li><p>还是举一个通俗栗子吧，在微博这个场景里，GET的语义会被用在「看看我的Timeline上最新的20条微博」这样的场景，而POST的语义会被用在「发微博、评论、点赞」这样的场景中。</p>
+</li>
+</ul>
+<p>总结：本文从通常的理解出发，经过一次质疑和又一次反质疑，一波三折，最终通过阅读RFC规范加深了对于HTTP方法的理解，真是一次令人愉快的探究之旅~我最大的感受就是：不要人云亦云，要坚持独立思考，不要满足于二手知识，要努力追本溯源。</p>
+<h6 id="总结：规范是规范，实施是实施。如果非要不按照规范去实施，可能结果能到达目的，但是却不一定是大家所想要的。上述关于HTTP协议中GET和POST方法的区别，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我，侵删！"><a href="#总结：规范是规范，实施是实施。如果非要不按照规范去实施，可能结果能到达目的，但是却不一定是大家所想要的。上述关于HTTP协议中GET和POST方法的区别，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我，侵删！" class="headerlink" title="总结：规范是规范，实施是实施。如果非要不按照规范去实施，可能结果能到达目的，但是却不一定是大家所想要的。上述关于HTTP协议中GET和POST方法的区别，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我，侵删！"></a>总结：规范是规范，实施是实施。如果非要不按照规范去实施，可能结果能到达目的，但是却不一定是大家所想要的。上述关于HTTP协议中GET和POST方法的区别，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我，侵删！</h6><hr>
+<blockquote>
+<p>原文出处:<br><a href="https://sunshinevvv.coding.me/blog/2017/02/09/HttpGETv.s.POST/" target="_blank" rel="external">https://sunshinevvv.coding.me/blog/2017/02/09/HttpGETv.s.POST/</a></p>
+<p>参考：<br><a href="https://sunshinevvv.coding.me/blog/2017/02/09/HttpGETv.s.POST/" target="_blank" rel="external">HTTP协议中GET和POST方法的区别</a>  </p>
+</blockquote>
+<hr>
+<p>博主前端小白，才疏学浅，若发现文章有任何不妥的地方，可直接<a href="mailto:jjl1993@foxamail.com" title="jjl1993@foxamail.com" target="_blank" rel="external">E-mail</a>!</p>
+<blockquote>
+<p>“Without new experiences, something inside of<br>us sleeps. The sleeper must awaken.”</p>
+</blockquote>
+]]></content>
+      
+        <categories>
+            
+            <category> Web </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> HTTP </tag>
+            
+            <tag> GET </tag>
+            
+            <tag> POST </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[关于数组去重的总结]]></title>
+      <url>/2017/11/15/array-to-heavy/</url>
+      <content type="html"><![CDATA[<h1 id="关于JS数组去重的方法总结"><a href="#关于JS数组去重的方法总结" class="headerlink" title="关于JS数组去重的方法总结"></a>关于JS数组去重的方法总结</h1><h2 id="方法一："><a href="#方法一：" class="headerlink" title="方法一："></a>方法一：</h2><ul>
+<li>双层循环，外层循环元素，内层循环时比较值。如果有相同的值则跳过，不相同则push进数组<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">//常规方法</div><div class="line">function unique(arr)&#123;</div><div class="line">    var res = [];</div><div class="line">    for (var i = 0; i &lt; arr.length; i++) &#123;</div><div class="line">        for (var j = i+1; j &lt; arr.length; j++) &#123;</div><div class="line">            if (arr[i] === arr[j]) &#123;</div><div class="line">                j = ++i;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        res.push(arr[i]);</div><div class="line">    &#125;</div><div class="line">    return res;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">// 类似写法，主要思路和判断方法是一样的，只是细节有点小改动</div><div class="line">function unique(arr)&#123;</div><div class="line">    var res = [arr[0]];</div><div class="line">    for (var i = 1; i &lt; arr.length; i++) &#123;</div><div class="line">        var repeat = false;</div><div class="line">        for (var j = 0; j &lt; res.length; j++) &#123;</div><div class="line">            if (arr[i] === res[j]) &#123;</div><div class="line">                repeat = true;</div><div class="line">                break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        if (!repeat) &#123;</div><div class="line">            res.push(arr[i]);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return res;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">//类似思路：主要都是通过双重循环遍历，利用splice直接在原数组进行操作</div><div class="line">//双层循环，外层循环元素，内层循环时比较值</div><div class="line">//值相同时，则删去这个值</div><div class="line">//注意点:删除元素之后，需要将数组的长度也减1.</div><div class="line">Array.prototype.unique = function ()&#123;</div><div class="line">    var arr = this,</div><div class="line">        i,</div><div class="line">        j,</div><div class="line">        len = arr.length;</div><div class="line"></div><div class="line">    for(i = 0; i &lt; len; i++)&#123;</div><div class="line">        for(j = i + 1; j &lt; len; j++)&#123;</div><div class="line">            if(arr[i] == arr[j])&#123;</div><div class="line">                arr.splice(j,1);</div><div class="line">                len--;</div><div class="line">                j--;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return arr;</div><div class="line">&#125;;</div><div class="line">var a = [1,2,3,4,5,6,5,3,2,4,56,4,1,2,1,1,1,1,1,1,];</div><div class="line">var b = a.unique();</div><div class="line">console.log(b.toString()); //1,2,3,4,5,6,56</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><ul>
+<li>利用indexOf()方法，下标索引查询，需要考虑indexOf该方法的兼容性<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">var indexOf = [].indexOf </div><div class="line">    ?</div><div class="line">    function indexOf(arr,item)&#123;</div><div class="line">        return arr.indexOf(item);</div><div class="line">    &#125;</div><div class="line">    :</div><div class="line">    function indexOf(arr,item)&#123;</div><div class="line">        for (var i = 0; i &lt; arr.length; i++) &#123;//这里遍历方法可以选择forEach，map，filter方法也可以实现，看你喜欢.</div><div class="line">            if (arr[i] === item) &#123;</div><div class="line">                return i;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return -1;</div><div class="line">    &#125;</div><div class="line">function unique(arr)&#123;</div><div class="line">    var res = [];</div><div class="line">    for (var i = 0; i &lt; arr.length; i++) &#123;</div><div class="line">        if (res.indexOf(arr[i]) === -1) &#123;</div><div class="line">            res.push(arr[i]);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return res;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="方法三（推荐）"><a href="#方法三（推荐）" class="headerlink" title="方法三（推荐）"></a>方法三（推荐）</h2><ul>
+<li>利用对象的属性不能相同的特点进行去重，考虑性能和优化</li>
+<li>创建一个新的数组存放结果</li>
+<li>创建一个空对象</li>
+<li>for循环时，每次取出一个元素与对象进行对比，如果这个元素不重复，则把它存放到结果数组中，同时把这个元素的内容作为对象的一个属性，并赋值为1，存入到第2步建立的对象中。<br><strong>说明：每次从原数组中取出一个元素，然后到对象中去访问这个属性，如果能访问到值，则说明重复。</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">function unique(arr)&#123;</div><div class="line">    var res = [],</div><div class="line">        hashObj = &#123;&#125;;</div><div class="line">        for (var i = 0; i &lt; arr.length; i++) &#123;</div><div class="line">            //注意:在 JavaScript 里，对象的键值只能是字符串，因此需要 var key = typeof(item) + item 来区分数值 1 和字符串 &apos;1&apos; 等情况</div><div class="line">            var item = arr[i],</div><div class="line">                key = typeof(item) + item;</div><div class="line">            if (!hashObj[key]) &#123;</div><div class="line">                res.push(item);</div><div class="line">                hashObj[key] = 1;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return res;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="方法四"><a href="#方法四" class="headerlink" title="方法四"></a>方法四</h2><ul>
+<li>先排序再去重，先将原数组排序，与相邻的进行比较，如果不同则存入新数组<br>1.先将原数组进行排序<br>2.检查原数组中的第i个元素与结果数组中的最后一个元素是否相同，因为已经排序，所以重复元素会在相邻位置<br>3.如果不相同，则将该元素存入结果数组中  </li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">function unique(arr)&#123;</div><div class="line">    var sortArr = arr.sort(function(value1,value2)&#123;</div><div class="line">        return value1 - value2;</div><div class="line">    &#125;);</div><div class="line">    var res = [sortArr[0]];</div><div class="line">    for (var i = 1; i &lt; sortArr.length; i++) &#123;</div><div class="line">        if (sortArr[i] !== res[res.length - 1]) &#123;</div><div class="line">                res.push(sortArr[i]);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return res;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">//写法二</div><div class="line">Array.prototype.unique2 = function()&#123;</div><div class="line"> this.sort(); //先排序</div><div class="line"> var res = [this[0]];</div><div class="line"> for(var i = 1; i &lt; this.length; i++)&#123;</div><div class="line">  if(this[i] !== res[res.length - 1])&#123;</div><div class="line">   res.push(this[i]);</div><div class="line">  &#125;</div><div class="line"> &#125;</div><div class="line"> return res;</div><div class="line">&#125;</div><div class="line">var arr = [1, &apos;a&apos;, &apos;a&apos;, &apos;b&apos;, &apos;d&apos;, &apos;e&apos;, &apos;e&apos;, 1, 0]</div><div class="line">alert(arr.unique2());</div></pre></td></tr></table></figure>
+<p><strong>注意：</strong><br>1.原数组的数据类型需要考虑<br>2.该方法存在一定的局限性，因为在去重前进行了排序，所以最后返回的去重结果也是排序后的。如果要求不改变数组的顺序去重，那这种方法便不可取了。</p>
+<h2 id="方法五"><a href="#方法五" class="headerlink" title="方法五"></a>方法五</h2><ul>
+<li>数组递归去重 + splice方法</li>
+<li>运用递归的思想，先排序，然后从最后开始比较，遇到相同，则删除<br><strong>注意：</strong>   </li>
+<li>同样的，这种方法和上面“排序去重”都存在相同缺陷<br>1.原数组的数据类型需要考虑<br>2.该方法存在一定的局限性，因为在去重前进行了排序，所以最后返回的去重结果也是排序后的。如果要求不改变数组的顺序去重，那这种方法便不可取了。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">function unique(arr)&#123;</div><div class="line">             //对数组进行排序才能方便比较</div><div class="line">            var sortArr = arr.sort(function(value1,value2)&#123;</div><div class="line">                return value1 - value2;</div><div class="line">            &#125;);</div><div class="line"></div><div class="line">            function loop(index)&#123;</div><div class="line">                if (index &gt;= 1) &#123;</div><div class="line">                    if (sortArr[index] === sortArr[index - 1]) &#123;</div><div class="line">                        sortArr.splice(index,1);</div><div class="line">                    &#125;</div><div class="line">                    loop(index - 1);//递归loop函数进行去重</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            loop(sortArr.length - 1);</div><div class="line">            return sortArr;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="方法六"><a href="#方法六" class="headerlink" title="方法六"></a>方法六</h2><ul>
+<li>利用ES6的set</li>
+<li>Set数据结构，它类似于数组，其成员的值都是唯一的。</li>
+</ul>
+<p>1.利用Array.from将Set结构转换为数组<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">function unique(arr)&#123;</div><div class="line">    return Array.from(new Set(arr));</div><div class="line">&#125;</div><div class="line">console.log(unique(arr1));</div></pre></td></tr></table></figure></p>
+<p>2.使用拓展运算符(…)，内部使用for…of循环<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let uniqueArr = [...new Set(arr)];</div><div class="line">// 或者</div><div class="line">var arr2 = [1,2,3,2,1,&apos;1&apos;,&apos;2&apos;,&apos;a&apos;,&apos;b&apos;,&apos;aa&apos;,&apos;b&apos;,&apos;c&apos;];</div><div class="line">    console.log([...new Set(arr2)]);</div></pre></td></tr></table></figure></p>
+<h6 id="总结：上述关于数组去重的方法各都存在优缺点，对于性能也有所不同，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我。"><a href="#总结：上述关于数组去重的方法各都存在优缺点，对于性能也有所不同，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我。" class="headerlink" title="总结：上述关于数组去重的方法各都存在优缺点，对于性能也有所不同，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我。"></a>总结：上述关于数组去重的方法各都存在优缺点，对于性能也有所不同，细节之处需要慢慢去体会。文章仅作为博主学习总结使用，如发现有任何侵权行为，请立马联系我。</h6><blockquote>
+<p>参考：<br><a href="https://www.cnblogs.com/rongy/p/6597014.html" target="_blank" rel="external">数组去重的四种方法</a><br><a href="https://segmentfault.com/a/1190000005116655" target="_blank" rel="external">再见，重复的你（数组去重）</a><br><a href="http://sentsin.com/web/63.html" target="_blank" rel="external">玉伯：从js数组去重谈性能优化</a></p>
+</blockquote>
+<hr>
+<p>博主前端小白，才疏学浅，若发现文章有任何不妥的地方，可直接<a href="mailto:jjl1993@foxamail.com" title="jjl1993@foxamail.com" target="_blank" rel="external">E-mail</a>!</p>
+<blockquote>
+<p>“An essential part of creativity is not being afraid to fail.”</p>
+</blockquote>
+]]></content>
+      
+        <categories>
+            
+            <category> JavaScript </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> JavaScript </tag>
+            
+            <tag> Array </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[恭喜WE,恭喜RNG]]></title>
+      <url>/2017/10/24/aboutLol/</url>
+      <content type="html"><![CDATA[<h1 id="很久没来说说话了，原因了，如下："><a href="#很久没来说说话了，原因了，如下：" class="headerlink" title="很久没来说说话了，原因了，如下："></a>很久没来说说话了，原因了，如下：</h1><ol>
+<li>一是因为懒懒懒；</li>
+<li>二是作者水平在那里，没得啥子有水平的言语和高深的技巧术语给你们；</li>
+<li>三则是因为最近忙着追剧（LOL-S7）；</li>
+</ol>
+<h2 id="在这里，还是先要"><a href="#在这里，还是先要" class="headerlink" title="在这里，还是先要"></a>在这里，还是先要</h2><h2 id="恭喜WE！恭喜RNG"><a href="#恭喜WE！恭喜RNG" class="headerlink" title="恭喜WE！恭喜RNG!"></a>恭喜WE！恭喜RNG!</h2><ul>
+<li>希望可以进一步取得更好的成绩吧！<h4 id="…"><a href="#…" class="headerlink" title="…"></a>…</h4><h4 id="…-1"><a href="#…-1" class="headerlink" title="…"></a>…</h4><h4 id="…-2"><a href="#…-2" class="headerlink" title="…"></a>…</h4></li>
+<li>也希望作者可以好好修炼哈自己，写点有营养的东西出来！</li>
+</ul>
+<a id="more"></a>
+<blockquote>
+<p>“When you’re curious, you find lots of interesting things to do.”</p>
+</blockquote>
+<h3 id="给LPL加油打气哈！！！"><a href="#给LPL加油打气哈！！！" class="headerlink" title="给LPL加油打气哈！！！"></a>给LPL加油打气哈！！！</h3><ul>
+<li>（以下图借用于其他平台，侵删！！！）</li>
+</ul>
+<center><img src="http://ossweb-img.qq.com/images/lol/v2/banner/pic-big-v13.jpg" alt=""></center><br><center><img src="http://ossweb-img.qq.com/upload/webplat/info/lol/20171022/36361119366232.jpg" alt=""></center><br><center><img src="http://ossweb-img.qq.com/upload/webplat/info/lol/20171022/477211071505025.jpg" alt=""></center>
+
+<h3 id="早点睡觉吧。"><a href="#早点睡觉吧。" class="headerlink" title="早点睡觉吧。"></a>早点睡觉吧。</h3>]]></content>
+      
+        <categories>
+            
+            <category> 杂谈 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> lol </tag>
+            
+            <tag> game </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[关于浏览器的回流（reflow）和重绘（repaint）]]></title>
+      <url>/2017/09/20/browserRender/</url>
+      <content type="html"><![CDATA[<h1 id="关于浏览器的回流-reflow）和重绘（repaint）"><a href="#关于浏览器的回流-reflow）和重绘（repaint）" class="headerlink" title="关于浏览器的回流(reflow）和重绘（repaint）"></a>关于浏览器的回流(reflow）和重绘（repaint）</h1><blockquote>
+<p>博文出自于：<a href="https://coolshell.cn/articles/9666.html" target="_blank" rel="external">https://coolshell.cn/articles/9666.html</a></p>
+<p>参考神文：<a href="http://taligarsiel.com/Projects/howbrowserswork1.htm" target="_blank" rel="external">《How Browsers Work》</a></p>
+</blockquote>
+<h2 id="浏览器的渲染原理简介"><a href="#浏览器的渲染原理简介" class="headerlink" title="浏览器的渲染原理简介"></a>浏览器的渲染原理简介</h2><ul>
+<li>在谈到浏览器的回流和重绘的时候，就不得不说到浏览器的渲染原理</li>
+</ul>
+<h3 id="浏览器工作大流程"><a href="#浏览器工作大流程" class="headerlink" title="浏览器工作大流程"></a>浏览器工作大流程</h3><ul>
+<li>废话少说，先来看个图：</li>
+</ul>
+<p><img src="https://coolshell.cn/wp-content/uploads/2013/05/Render-Process-768x250.jpg" alt=""></p>
+<p><strong>从上面这个图中，我们可以看到那么几个事：</strong></p>
+<a id="more"></a>
+<p>1). 浏览器会解析三个东西：</p>
+<ul>
+<li>一个是HTML/SVG/XHTML，事实上，Webkit有三个C++的类对应这三类文档。解析这三种文件会产生一个DOM Tree。</li>
+<li>CSS，解析CSS会产生CSS规则树。</li>
+<li>Javascript，脚本，主要是通过DOM API和CSSOM API来操作DOM Tree和CSS Rule Tree. </li>
+</ul>
+<p>2). 解析完成后，浏览器引擎会通过DOM Tree 和 CSS Rule Tree 来构造 Rendering Tree。注意：</p>
+<ul>
+<li>Rendering Tree 渲染树并不等同于DOM树，因为一些像Header或display:none的东西就没必要放在渲染树中了。</li>
+<li>CSS 的 Rule Tree主要是为了完成匹配并把CSS Rule附加上Rendering Tree上的每个Element。也就是DOM结点。也就是所谓的Frame。</li>
+<li>然后，计算每个Frame（也就是每个Element）的位置，这又叫layout和reflow过程。</li>
+</ul>
+<p>3）最后通过调用操作系统Native GUI的API绘制。</p>
+<h3 id="DOM解析"><a href="#DOM解析" class="headerlink" title="DOM解析"></a>DOM解析</h3><p>HTML的DOM Tree解析如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;title&gt;Web page parsing&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">    &lt;div&gt;</div><div class="line">        &lt;h1&gt;Web page parsing&lt;/h1&gt;</div><div class="line">        &lt;p&gt;This is an example Web page.&lt;/p&gt;</div><div class="line">    &lt;/div&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>上面这段HTML会解析成这样：  </li>
+</ul>
+<p><img src="https://coolshell.cn/wp-content/uploads/2013/05/DOM-Tree-01.jpg" alt="">  </p>
+<ul>
+<li>下面是另一个有SVG标签的情况。</li>
+</ul>
+<p><img src="https://coolshell.cn/wp-content/uploads/2013/05/DOM-Tree-02.jpg" alt=""></p>
+<h3 id="CSS解析"><a href="#CSS解析" class="headerlink" title="CSS解析"></a>CSS解析</h3><p>CSS的解析大概是下面这个样子（下面主要说的是Gecko也就是Firefox的玩法），假设我们有下面的HTML文档：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;doc&gt;</div><div class="line">&lt;title&gt;A few quotes&lt;/title&gt;</div><div class="line">&lt;para&gt;</div><div class="line">  Franklin said that &lt;quote&gt;&quot;A penny saved is a penny earned.&quot;&lt;/quote&gt;</div><div class="line">&lt;/para&gt;</div><div class="line">&lt;para&gt;</div><div class="line">  FDR said &lt;quote&gt;&quot;We have nothing to fear but &lt;span&gt;fear itself.&lt;/span&gt;&quot;&lt;/quote&gt;</div><div class="line">&lt;/para&gt;</div><div class="line">&lt;/doc&gt;</div></pre></td></tr></table></figure></p>
+<p>于是DOM Tree是这个样子： </p>
+<p><img src="https://coolshell.cn/wp-content/uploads/2013/05/DOM-Tree-Example.jpg" alt="">  </p>
+<p>然后我们的CSS文档是这样的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">/* rule 1 */ doc &#123; display: block; text-indent: 1em; &#125;</div><div class="line">/* rule 2 */ title &#123; display: block; font-size: 3em; &#125;</div><div class="line">/* rule 3 */ para &#123; display: block; &#125;</div><div class="line">/* rule 4 */ [class=&quot;emph&quot;] &#123; font-style: italic; &#125;</div></pre></td></tr></table></figure></p>
+<p>于是我们的CSS Rule Tree会是这个样子：</p>
+<p><img src="https://coolshell.cn/wp-content/uploads/2013/05/CSS-Rule-Tree-Example.jpg" alt=""></p>
+<ul>
+<li>注意，图中的第4条规则出现了两次，一次是独立的，一次是在规则3的子结点。所以，我们可以知道，建立CSS Rule Tree是需要比照着DOM Tree来的。CSS匹配DOM Tree主要是从右到左解析CSS的Selector，好多人以为这个事会比较快，其实并不一定。关键还看我们的CSS的Selector怎么写了。</li>
+</ul>
+<p><strong>注意：CSS匹配HTML元素是一个相当复杂和有性能问题的事情。所以，你就会在N多地方看到很多人都告诉你，DOM树要小，CSS尽量用id和class，千万不要过渡层叠下去，……</strong></p>
+<p>通过这两个树，我们可以得到一个叫Style Context Tree，也就是下面这样（把CSS Rule结点Attach到DOM Tree上）：</p>
+<p><img src="https://coolshell.cn/wp-content/uploads/2013/05/CSS-Content-Tree-Example.jpg" alt=""></p>
+<p>所以，Firefox基本上来说是通过CSS 解析 生成 CSS Rule Tree，然后，通过比对DOM生成Style Context Tree，然后Firefox通过把Style Context Tree和其Render Tree（Frame Tree）关联上，就完成了。<strong>注意：Render Tree会把一些不可见的结点去除掉。而Firefox中所谓的Frame就是一个DOM结点，不要被其名字所迷惑了。</strong></p>
+<p><img src="https://coolshell.cn/wp-content/uploads/2013/05/Firefox-style-context-tree.png" alt=""></p>
+<p><strong>注：Webkit不像Firefox要用两个树来干这个，Webkit也有Style对象，它直接把这个Style对象存在了相应的DOM结点上了。</strong></p>
+<h3 id="渲染"><a href="#渲染" class="headerlink" title="渲染"></a>渲染</h3><p>渲染的流程基本上如下（黄色的四个步骤）：</p>
+<ol>
+<li>计算CSS样式</li>
+<li>构建Render Tree</li>
+<li>Layout – 定位坐标和大小，是否换行，各种position, overflow, z-index属性 ……</li>
+<li>正式开画</li>
+</ol>
+<p><img src="https://coolshell.cn/wp-content/uploads/2013/05/Render-Process-Skipping-1024x282.jpg" alt="">  </p>
+<p><strong>注意：上图流程中有很多连接线，这表示了Javascript动态修改了DOM属性或是CSS属会导致重新Layout，有些改变不会，就是那些指到天上的箭头，比如，修改后的CSS rule没有被匹配到，等。</strong></p>
+<p>这里重要要说两个概念，一个是<strong>Reflow</strong>，另一个是<strong>Repaint</strong>。这两个不是一回事。  </p>
+<ul>
+<li>Repaint——屏幕的一部分要重画，比如某个CSS的背景色变了。但是元素的几何尺寸没有变。</li>
+<li>Reflow——意味着元件的几何尺寸变了，我们需要重新验证并计算Render Tree。是Render Tree的一部分或全部发生了变化。这就是Reflow，或是Layout。<strong>（HTML使用的是flow based layout，也就是流式布局，所以，如果某元件的几何尺寸发生了变化，需要重新布局，也就叫reflow）</strong>reflow 会从<html>这个root frame开始递归往下，依次计算所有的结点几何尺寸和位置，在reflow过程中，可能会增加一些frame，比如一个文本字符串必需被包装起来。</html></li>
+<li>Reflow的成本比Repaint的成本高得多的多。DOM Tree里的每个结点都会有reflow方法，一个结点的reflow很有可能导致子结点，甚至父点以及同级结点的reflow。<strong>在一些高性能的电脑上也许还没什么，但是如果reflow发生在手机上，那么这个过程是非常痛苦和耗电的。</strong></li>
+</ul>
+<p>所以，下面这些动作有很大可能会是成本比较高的。</p>
+<ul>
+<li>当你增加、删除、修改DOM结点时，会导致Reflow或Repaint</li>
+<li>当你移动DOM的位置，或是搞个动画的时候。</li>
+<li>当你修改CSS样式的时候。</li>
+<li>当你Resize窗口的时候（移动端没有这个问题），或是滚动的时候。</li>
+<li>当你修改网页的默认字体时。</li>
+</ul>
+<p><strong>注：display:none会触发reflow，而visibility:hidden只会触发repaint，因为没有发现位置变化。</strong></p>
+<p>多说两句关于滚屏的事，通常来说，如果在滚屏的时候，我们的页面上的所有的像素都会跟着滚动，那么性能上没什么问题，因为我们的显卡对于这种把全屏像素往上往下移的算法是很快。但是如果你有一个fixed的背景图，或是有些Element不跟着滚动，有些Elment是动画，那么这个滚动的动作对于浏览器来说会是相当相当痛苦的一个过程。你可以看到很多这样的网页在滚动的时候性能有多差。因为滚屏也有可能会造成reflow。</p>
+<p>基本上来说，reflow有如下的几个原因：</p>
+<ul>
+<li>Initial。网页初始化的时候。</li>
+<li>Incremental。一些Javascript在操作DOM Tree时。</li>
+<li>Resize。其些元件的尺寸变了。</li>
+<li>StyleChange。如果CSS的属性发生变化了。</li>
+<li>Dirty。几个Incremental的reflow发生在同一个frame的子树上。</li>
+</ul>
+<p>好了，我们来看一个示例吧：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">var bstyle = document.body.style; // cache</div><div class="line"> </div><div class="line">bstyle.padding = &quot;20px&quot;; // reflow, repaint</div><div class="line">bstyle.border = &quot;10px solid red&quot;; //  再一次的 reflow 和 repaint</div><div class="line"> </div><div class="line">bstyle.color = &quot;blue&quot;; // repaint</div><div class="line">bstyle.backgroundColor = &quot;#fad&quot;; // repaint</div><div class="line"> </div><div class="line">bstyle.fontSize = &quot;2em&quot;; // reflow, repaint</div><div class="line"> </div><div class="line">// new DOM element - reflow, repaint</div><div class="line">document.body.appendChild(document.createTextNode(&apos;dude!&apos;));</div></pre></td></tr></table></figure></p>
+<p>当然，我们的浏览器是聪明的，它不会像上面那样，你每改一次样式，它就reflow或repaint一次。<strong>一般来说，浏览器会把这样的操作积攒一批，然后做一次reflow，这又叫异步reflow或增量异步reflow。</strong>但是有些情况浏览器是不会这么做的，比如：resize窗口，改变了页面默认的字体，等。对于这些操作，浏览器会马上进行reflow。</p>
+<p>但是有些时候，我们的脚本会阻止浏览器这么干，比如：如果我们请求下面的一些DOM值：</p>
+<ol>
+<li>offsetTop, offsetLeft, offsetWidth, offsetHeight</li>
+<li>scrollTop/Left/Width/Height</li>
+<li>clientTop/Left/Width/Height</li>
+<li>IE中的 getComputedStyle(), 或 currentStyle</li>
+</ol>
+<p>因为，如果我们的程序需要这些值，那么浏览器需要返回最新的值，而这样一样会flush出去一些样式的改变，从而造成频繁的reflow/repaint。</p>
+<h3 id="减少reflow-repaint"><a href="#减少reflow-repaint" class="headerlink" title="减少reflow/repaint"></a>减少reflow/repaint</h3><p>下面是一些Best Practices：</p>
+<h5 id="1-不要一条一条地修改DOM的样式。与其这样，还不如预先定义好css的class，然后修改DOM的className。"><a href="#1-不要一条一条地修改DOM的样式。与其这样，还不如预先定义好css的class，然后修改DOM的className。" class="headerlink" title="1).不要一条一条地修改DOM的样式。与其这样，还不如预先定义好css的class，然后修改DOM的className。"></a>1).不要一条一条地修改DOM的样式。与其这样，还不如预先定义好css的class，然后修改DOM的className。</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">// bad</div><div class="line">var left = 10,</div><div class="line">top = 10;</div><div class="line">el.style.left = left + &quot;px&quot;;</div><div class="line">el.style.top  = top  + &quot;px&quot;;</div><div class="line"> </div><div class="line">// Good</div><div class="line">el.className += &quot; theclassname&quot;;</div><div class="line"> </div><div class="line">// Good</div><div class="line">el.style.cssText += &quot;; left: &quot; + left + &quot;px; top: &quot; + top + &quot;px;&quot;;</div></pre></td></tr></table></figure>
+<h5 id="2-把DOM离线后修改。如："><a href="#2-把DOM离线后修改。如：" class="headerlink" title="2).把DOM离线后修改。如："></a>2).把DOM离线后修改。如：</h5><ul>
+<li>使用documentFragment 对象在内存里操作DOM</li>
+<li>先把DOM给display:none(有一次reflow)，然后你想怎么改就怎么改。比如修改100次，然后再把他显示出来。</li>
+<li>clone一个DOM结点到内存里，然后想怎么改就怎么改，改完后，和在线的那个的交换一下。</li>
+</ul>
+<h5 id="3-不要把DOM结点的属性值放在一个循环里当成循环里的变量。不然这会导致大量地读写这个结点的属性。"><a href="#3-不要把DOM结点的属性值放在一个循环里当成循环里的变量。不然这会导致大量地读写这个结点的属性。" class="headerlink" title="3).不要把DOM结点的属性值放在一个循环里当成循环里的变量。不然这会导致大量地读写这个结点的属性。"></a>3).不要把DOM结点的属性值放在一个循环里当成循环里的变量。不然这会导致大量地读写这个结点的属性。</h5><h5 id="4-尽可能的修改层级比较低的DOM。当然，改变层级比较底的DOM有可能会造成大面积的reflow，但是也可能影响范围很小。"><a href="#4-尽可能的修改层级比较低的DOM。当然，改变层级比较底的DOM有可能会造成大面积的reflow，但是也可能影响范围很小。" class="headerlink" title="4).尽可能的修改层级比较低的DOM。当然，改变层级比较底的DOM有可能会造成大面积的reflow，但是也可能影响范围很小。"></a>4).尽可能的修改层级比较低的DOM。当然，改变层级比较底的DOM有可能会造成大面积的reflow，但是也可能影响范围很小。</h5><h5 id="5-为动画的HTML元件使用fixed或absoult的position，那么修改他们的CSS是不会reflow的。"><a href="#5-为动画的HTML元件使用fixed或absoult的position，那么修改他们的CSS是不会reflow的。" class="headerlink" title="5).为动画的HTML元件使用fixed或absoult的position，那么修改他们的CSS是不会reflow的。"></a>5).为动画的HTML元件使用fixed或absoult的position，那么修改他们的CSS是不会reflow的。</h5><h5 id="6-千万不要使用table布局。因为可能很小的一个小改动会造成整个table的重新布局。"><a href="#6-千万不要使用table布局。因为可能很小的一个小改动会造成整个table的重新布局。" class="headerlink" title="6).千万不要使用table布局。因为可能很小的一个小改动会造成整个table的重新布局。"></a>6).千万不要使用table布局。因为可能很小的一个小改动会造成整个table的重新布局。</h5><blockquote>
+<p>In this manner, the user agent can begin to lay out the table once the entire first row has been received. Cells in subsequent rows do not affect column widths. Any cell that has content that overflows uses the ‘overflow’ property to determine whether to clip the overflow content.</p>
+</blockquote>
+<p>Fixed layout, CSS 2.1 Specification</p>
+<blockquote>
+<p>This algorithm may be inefficient since it requires the user agent to have access to all the content in the table before determining the final layout and may demand more than one pass.</p>
+</blockquote>
+<p>Automatic layout, CSS 2.1 Specification</p>
+<h3 id="几个工具和几篇文章"><a href="#几个工具和几篇文章" class="headerlink" title="几个工具和几篇文章"></a>几个工具和几篇文章</h3><p>有时候，你会也许会发现在IE下，你不知道你修改了什么东西，结果CPU一下子就上去了到100%，然后过了好几秒钟repaint/reflow才完成，这种事情以IE的年代时经常发生。所以，我们需要一些工具帮我们看看我们的代码里有没有什么不合适的东西。</p>
+<ul>
+<li>Chrome下，Google的SpeedTracer是个非常强悍的工作让你看看你的浏览渲染的成本有多大。其实Safari和Chrome都可以使用开发者工具里的一个Timeline的东东。</li>
+<li>Firefox下这个基于Firebug的叫Firebug Paint Events的插件也不错。</li>
+<li>IE下你可以用一个叫dynaTrace的IE扩展。</li>
+</ul>
+<p>最后，别忘了下面这几篇提高浏览器性能的文章：</p>
+<ul>
+<li><a href="http://code.google.com/speed/page-speed/docs/rules_intro.html" target="_blank" rel="external">Google – Web Performance Best Practices</a></li>
+<li><a href="http://developer.yahoo.com/performance/rules.html" target="_blank" rel="external">Yahoo – Best Practices for Speeding Up Your Web Site</a></li>
+<li><a href="http://stevesouders.com/hpws/rules.php" target="_blank" rel="external">Steve Souders – 14 Rules for Faster-Loading Web Sites</a></li>
+</ul>
+<h6 id="总结：上述关于浏览器渲染原理的简介以及关于浏览器的回流和重绘细节之处需要慢慢去体会。引用此文章仅作为博主学习总结，如发现有任何侵权行为，请立马联系我。"><a href="#总结：上述关于浏览器渲染原理的简介以及关于浏览器的回流和重绘细节之处需要慢慢去体会。引用此文章仅作为博主学习总结，如发现有任何侵权行为，请立马联系我。" class="headerlink" title="总结：上述关于浏览器渲染原理的简介以及关于浏览器的回流和重绘细节之处需要慢慢去体会。引用此文章仅作为博主学习总结，如发现有任何侵权行为，请立马联系我。"></a>总结：上述关于浏览器渲染原理的简介以及关于浏览器的回流和重绘细节之处需要慢慢去体会。引用此文章仅作为博主学习总结，如发现有任何侵权行为，请立马联系我。</h6><blockquote>
+<p>参考：<br><a href="https://coolshell.cn/articles/9666.html" target="_blank" rel="external">浏览器的渲染原理简介</a>  </p>
+</blockquote>
+<hr>
+<p>博主前端小白，才疏学浅，若发现文章有任何不妥的地方，可直接<a href="mailto:jjl1993@foxamail.com" title="jjl1993@foxamail.com" target="_blank" rel="external">E-mail</a>!</p>
+<blockquote>
+<p>“An essential part of creativity is not being afraid to fail.”</p>
+</blockquote>
+]]></content>
+      
+        <categories>
+            
+            <category> Web </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> JavaScript </tag>
+            
+            <tag> Web </tag>
+            
+            <tag> HTML </tag>
+            
+            <tag> CSS </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[递归]]></title>
+      <url>/2017/09/20/factorial/</url>
+      <content type="html"><![CDATA[<h1 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h1><h2 id="浅谈js里面的递归！"><a href="#浅谈js里面的递归！" class="headerlink" title="浅谈js里面的递归！"></a>浅谈js里面的递归！</h2><ul>
+<li>递归函数是在一个函数通过名字调用自身的情况下构成的，示例如下。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function factorial(num)&#123;</div><div class="line">    if(num &lt;= 1)&#123;</div><div class="line">        return 1;</div><div class="line">    &#125;else&#123;</div><div class="line">        return num * factorial(num-1);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">factorial(5);  //120</div></pre></td></tr></table></figure>
+<ul>
+<li><p>上面的示例是一个经典递归阶乘函数。虽然这个函数表面看起来没什么问题，但是接下来你再看看，看仔细哟。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var anotherFactorial = factorial;</div><div class="line">    factorial = null;</div><div class="line">    console.log(anotherFactorial(4));//报错！！！</div></pre></td></tr></table></figure>
+</li>
+<li><p>出错了？是的。</p>
+</li>
+<li>上述代码先把factorial()函数保存在变量anotherfactorial中，然后将factorial变量设置为null，结果指向原始函数的引用只剩下一个。但在接下来调用anotherfactorial()时，由于必须执行factorial(),而factorial已经不再是函数，所以就会导致错误。在这种情况下，怎么解决这个问题呢？使用arguments.callee可以解决这个问题。</li>
+<li><a id="more"></a>
+</li>
+<li><p>我们知道，arguments.callee是一个指向正在执行的函数的指针，因此可以用它来实现对函数的递归调用，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">function factorial(num)&#123;</div><div class="line">    if(num &lt;= 1)&#123;</div><div class="line">        return 1;</div><div class="line">    &#125;else&#123;</div><div class="line">        return num * arguments.callee(num-1);//手动加粗</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>上面手动加粗的代码显示：通过使用arguments.callee代替函数名，可以确保无论怎样调用函数都不会出问题。因此，在编写递归函数时，使用arguments.callee总比使用函数名更保险。</p>
+</li>
+<li><p>但在严格模式下，不能通过脚本访问arguments.callee，访问这个属性会导致错误。不过，可以使用命名函数表达式来达成相同的效果。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">var factorial = (function f(num)&#123;</div><div class="line">    if(num &lt;= 1)&#123;</div><div class="line">        return 1;</div><div class="line">    &#125;else&#123;</div><div class="line">        return num*f(num-1);</div><div class="line">    &#125;</div><div class="line">    &#125;);</div></pre></td></tr></table></figure>
+</li>
+<li><p>通过以上的代码创建了名为f()的命名函数表达式，然后将它赋值给变量factorial。即便把函数复制给了另一个变量，函数的名字f仍然有效，所以递归调用照样能正确的完成。</p>
+</li>
+<li>这种方式在严格模式和非严格模式下都行得通。</li>
+<li>总结：</li>
+<li>递归： 函数体中调用函数自身–函数自己和自己玩。</li>
+</ul>
+<blockquote>
+<p>“Don’t let yesterday take up too much of today.”</p>
+</blockquote>
+<p><strong><a href="http://jjlhi.com">福利</a></strong></p>
+<p><img src="https://farm6.staticflickr.com/5469/16783837234_d8eee7d83c_h.jpg" alt=""></p>
+<blockquote>
+<p>看看别个怎么说的：<br>一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p>
+</blockquote>
+<h3 id="不说了，该睡觉了。"><a href="#不说了，该睡觉了。" class="headerlink" title="不说了，该睡觉了。"></a>不说了，该睡觉了。</h3>]]></content>
+      
+        <categories>
+            
+            <category> JavaScript </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> JavaScript </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Attention]]></title>
+      <url>/2017/09/06/testFile/</url>
+      <content type="html"><![CDATA[<h2 id="本站作者还在探索建设中…"><a href="#本站作者还在探索建设中…" class="headerlink" title="本站作者还在探索建设中…"></a>本站作者还在探索建设中…</h2><ul>
+<li>有好东西给你们</li>
+<li>常来逛逛</li>
+<li>逛到深处会有福利的</li>
+<li>——————–横线—————————<a id="more"></a>
+</li>
+</ul>
+<p><strong><a href="http://jjlhi.com">福利</a></strong></p>
+<p><img src="https://farm3.staticflickr.com/2888/33038677584_8f3755dd1c_k.jpg" alt=""></p>
+<blockquote>
+<p>看看别个怎么说的：<br>一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p>
+</blockquote>
+<h3 id="不说了，该睡觉了。"><a href="#不说了，该睡觉了。" class="headerlink" title="不说了，该睡觉了。"></a>不说了，该睡觉了。</h3>]]></content>
+      
+        <categories>
+            
+            <category> 解释说明 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Description </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[深夜，恭喜国足]]></title>
+      <url>/2017/08/30/second/</url>
+      <content type="html"><![CDATA[<h1 id="恭喜中国足球在俄罗斯世界预选赛赢得一场胜利"><a href="#恭喜中国足球在俄罗斯世界预选赛赢得一场胜利" class="headerlink" title="恭喜中国足球在俄罗斯世界预选赛赢得一场胜利"></a>恭喜中国足球在俄罗斯世界预选赛赢得一场胜利</h1><h2 id="希望国足可以走得更远"><a href="#希望国足可以走得更远" class="headerlink" title="希望国足可以走得更远"></a>希望国足可以走得更远</h2><p>– 国足 牛逼！<br><a id="more"></a><br>– 又是一个伤心的夜晚<br>– 今天看到了希望<br>– 换来的是绝望<br>– 不是队员不努力<br>– 不是某个队员的失误<br>– 而是从古至今国足经历了多少次黑色三分钟<br>– 我们的球员什么时候才能分析场上形势<br>– 根据形势踢该踢的球<br>– 该往角球带就往角球带<br>– 不行卧草也能拖延时间<br>– 这是整个中国足球教育体系的问题<br>– 一次又一次的伤球迷的心<br>– 虽然下场比赛还是会继续为你们加油<br>– 但国足争气点<br>– 把属于足球的快乐还给中国球迷<br>– 我知道你们也很难受<br>– 但难受有用吗 我们更看重结果<br>– 但就这样的球队进了世界杯又能怎样呢<br>– 晚安吧 明天又是新的一天</p>
+]]></content>
+      
+        <categories>
+            
+            <category> 杂谈 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> sports </tag>
+            
+        </tags>
+        
+    </entry>
+    
+  
+  
 </search>
